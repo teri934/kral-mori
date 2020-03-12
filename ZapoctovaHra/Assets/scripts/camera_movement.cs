@@ -5,6 +5,7 @@ using UnityEngine;
 public class camera_movement : MonoBehaviour
 {
     public GameObject ship;
+	const int max_dist_square = 40;
     Vector3 last;
     // Start is called before the first frame update
     void Start()
@@ -15,8 +16,14 @@ public class camera_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		//sledování lodi
         transform.Translate(ship.transform.position - last, Space.World);
         last = ship.transform.position;
         Debug.Log(last);
+		
+		//zoom kamery 
+		if (Input.GetAxis("Mouse ScrollWheel")!=0f){
+			transform.Translate(Input.GetAxis("Mouse ScrollWheel")*(ship.transform.position - transform.position), Space.World);
+		}
     }
 }

@@ -16,20 +16,20 @@ public class ship_movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            //transform.Rotate(0.0f, -1.0f, 0.0f, Space.Self);
-            rb.AddTorque(0f, -0.5f, 0f);
-        }
-
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            rb.AddTorque(0f, 0.5f, 0f);
+            //transform.Rotate(0.0f, -1.0f, 0.0f, Space.Self);
+            rb.AddTorque(0f, -5f, 0f);
+        }
+
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            rb.AddTorque(0f, 5f, 0f);
         }
 
         angle = Vector3.Angle(wind_generator.position, transform.forward);
         Debug.Log(angle);
-
+		
         rb.AddForce(3f * transform.forward + transform.forward * 3f * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
     }
     void Update()

@@ -18,14 +18,17 @@ public class ship_movement : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             anchor = !anchor;
             Debug.Log(anchor);
         }
 
+
         angle = Vector3.Angle(wind_generator.position, transform.forward);
         Debug.Log(angle);
+
 
         if (anchor == false)
         {
@@ -42,6 +45,10 @@ public class ship_movement : MonoBehaviour
                 rb.AddTorque(0f, 0.5f, 0f);
             }
         }
+
+
+		
+        rb.AddForce(3f * transform.forward + transform.forward * 3f * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
 
     }
     void Update()

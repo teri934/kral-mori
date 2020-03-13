@@ -7,6 +7,7 @@ public class ship_movement : MonoBehaviour
     private Rigidbody rb;
     float angle;
     private bool anchor;
+	public float speed = 10f;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +24,7 @@ public class ship_movement : MonoBehaviour
 
         if (anchor == false)
         {
-            rb.AddForce(17f * transform.forward + transform.forward * 17f * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
+            rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {

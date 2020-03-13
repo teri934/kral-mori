@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom_water_shader
+  m_Shader: {fileID: -6465566751694194690, guid: 065bca3587485a14e8a319236d730c3e,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_69E9C3FA: 0.06
+    - Vector1_C398FF87: 0.1
+    - _Glossiness: 0.5
+    - _HighlightThresholdMax: 1
+    - _Metallic: 0
+    - _Quality: 0.5
+    m_Colors:
+    - Color_3633A693: {r: 0.3764706, g: 0.3764706, b: 0.3764706, a: 0}
+    - Color_517A5851: {r: 0.4175864, g: 0.9516504, b: 0.9622642, a: 0}
+    - Color_7DEA8987: {r: 0.6415094, g: 1, b: 1, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RegularColor: {r: 0, g: 1, b: 0.99999976, a: 1}

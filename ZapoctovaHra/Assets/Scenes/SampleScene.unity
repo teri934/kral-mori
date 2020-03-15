@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -419,6 +419,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ship_01
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: f903147a2af18974db4e4840b557a673,
+        type: 3}
+      propertyPath: m_TagString
+      value: ship
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f903147a2af18974db4e4840b557a673, type: 3}
 --- !u!1 &705507993
@@ -495,8 +500,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: -2.3404263e-24, y: 2.3937171e-21, z: -3.0590932e+31,
-    w: NaN}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -545,6 +549,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e635a34b53319a4d9e1d3a1cfb63e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ball: {fileID: 8586477405775983351, guid: 73b864f4a334f604f824c62dba56fc14, type: 3}
+  ball_force: 6
   speed: 6
   rot_speed: 3
 --- !u!54 &725662052

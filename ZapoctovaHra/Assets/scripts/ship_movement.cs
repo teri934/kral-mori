@@ -20,8 +20,6 @@ public class ship_movement : MonoBehaviour
     private void FixedUpdate()
     {
 
-        Debug.Log(angle);
-
         if (anchor == false)
         {
             rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);

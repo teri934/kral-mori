@@ -5,21 +5,20 @@ using System;
 
 public class generate_islands : MonoBehaviour
 {
-	public GameObject island;
 	private GameObject new_island;
 	int type_of_island;
 	Tuple<GameObject, int> parameters;
-	public static GameObject isolated;
-	public static GameObject hill;
-	public static GameObject L;
-	public static GameObject one_line;
-	public static GameObject two_lines;
-	public static GameObject full;
+	public GameObject isolated;
+	public GameObject hill;
+	public GameObject L;
+	public GameObject one_line;
+	public GameObject two_lines;
+	public GameObject full;
 
 	// Start is called before the first frame update
 	void Start()
     {
-		List<Tuple<GameObject, int>> models = Chunk.CreateModel();
+		List<Tuple<GameObject, int>> models = CreateModel();
 		Chunk chunk = new Chunk(16,16);
 		chunk.generateIslands();
 		chunk.printChunk();
@@ -29,8 +28,8 @@ public class generate_islands : MonoBehaviour
 				{
 					type_of_island = chunk.TypeOfIsland(y, x);
 					parameters = models[type_of_island];
-					new_island = Instantiate(island,new Vector3(x*20,0,y*20),Quaternion.identity);
-					new_island.GetComponent<MeshFilter>().mesh = parameters.Item1.GetComponent<MeshFilter>().mesh;
+					new_island = Instantiate(parameters.Item1,new Vector3(x*10,0,y*10),Quaternion.identity);
+					new_island.GetComponent<Transform>().rotation = Quaternion.Euler(0f, (float) parameters.Item2, 0f);
 				}
 				//Debug.Log(x + " "+  y + " "+ Mathf.PerlinNoise((float)x/16,(float)y/16));
 			}
@@ -42,6 +41,31 @@ public class generate_islands : MonoBehaviour
     {
         
     }
+
+	public List<Tuple<GameObject, int>> CreateModel()
+	{
+		List<Tuple<GameObject, int>> models = new List<Tuple<GameObject, int>>();
+
+
+		models.Add(new Tuple<GameObject, int>(isolated, 0));
+		models.Add(new Tuple<GameObject, int>(hill, 270));
+		models.Add(new Tuple<GameObject, int>(hill, 0));
+		models.Add(new Tuple<GameObject, int>(L, 90));
+		models.Add(new Tuple<GameObject, int>(hill, 90));
+		models.Add(new Tuple<GameObject, int>(two_lines, 0));
+		models.Add(new Tuple<GameObject, int>(L, 180));
+		models.Add(new Tuple<GameObject, int>(one_line, 270));
+		models.Add(new Tuple<GameObject, int>(hill, 180));
+		models.Add(new Tuple<GameObject, int>(L, 0));
+		models.Add(new Tuple<GameObject, int>(two_lines, 90));
+		models.Add(new Tuple<GameObject, int>(one_line, 180));
+		models.Add(new Tuple<GameObject, int>(L, 270));
+		models.Add(new Tuple<GameObject, int>(one_line, 90));
+		models.Add(new Tuple<GameObject, int>(one_line, 0));
+		models.Add(new Tuple<GameObject, int>(full, 0));
+
+		return models;
+	}
 }
 
 public class Chunk
@@ -91,42 +115,20 @@ public class Chunk
 		{
 			for (int dy = -1; dy < 2; dy++)
 			{
-				if ((x + dx < chunk_matrix.Length) && (y + dy < chunk_matrix.Length) && (x + dx > -1) && (y + dy > -1))
+				if (Mathf.Abs(dx) + Mathf.Abs(dy) == 1)
 				{
-					if (Mathf.Abs(dx) + Mathf.Abs(dy) == 1)
+					if ((x + dx < chunk_matrix.Length) && (y + dy < chunk_matrix.Length) && (x + dx > -1) && (y + dy > -1))
 					{
-						value_of_island += value_array[pointer];
-						pointer += 1;
+						if (chunk_matrix[x + dx][y + dy] == 1)
+						{
+							value_of_island += value_array[pointer];
+						}
 					}
+				pointer += 1;
 				}
 			}
 		}
 		return value_of_island;
-	}
-
-	public static List<Tuple<GameObject, int>> CreateModel()
-	{
-		List<Tuple<GameObject, int>> models =  new List<Tuple<GameObject, int>>();
-
-
-		models.Add(new Tuple<GameObject, int>(generate_islands.isolated, 0));
-		models.Add(new Tuple<GameObject, int>(generate_islands.hill, 180));
-		models.Add(new Tuple<GameObject, int>(generate_islands.hill, 270));
-		models.Add(new Tuple<GameObject, int>(generate_islands.L, 0));
-		models.Add(new Tuple<GameObject, int>(generate_islands.hill, 0));
-		models.Add(new Tuple<GameObject, int>(generate_islands.two_lines, 90));
-		models.Add(new Tuple<GameObject, int>(generate_islands.L, 90));
-		models.Add(new Tuple<GameObject, int>(generate_islands.one_line, 270));
-		models.Add(new Tuple<GameObject, int>(generate_islands.hill, 90));
-		models.Add(new Tuple<GameObject, int>(generate_islands.L, 270));
-		models.Add(new Tuple<GameObject, int>(generate_islands.two_lines, 0));
-		models.Add(new Tuple<GameObject, int>(generate_islands.one_line, 180));
-		models.Add(new Tuple<GameObject, int>(generate_islands.L, 180));
-		models.Add(new Tuple<GameObject, int>(generate_islands.one_line, 90));
-		models.Add(new Tuple<GameObject, int>(generate_islands.one_line, 0));
-		models.Add(new Tuple<GameObject, int>(generate_islands.full, 0));
-
-		return models;
 	}
 	
 }

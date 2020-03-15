@@ -16,12 +16,11 @@ public class camera_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		//sledování lodi
+		//ship tracking
         transform.Translate(ship.transform.position - last, Space.World);
         last = ship.transform.position;
-        Debug.Log(last);
 		
-		//zoom kamery 
+		//camera zoom
 		if (Input.GetAxis("Mouse ScrollWheel")!=0f){
 			transform.Translate(Input.GetAxis("Mouse ScrollWheel")*(ship.transform.position - transform.position), Space.World);
 		}

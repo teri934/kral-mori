@@ -8,6 +8,7 @@ public class ship_movement : MonoBehaviour
     float angle;
     private bool anchor;
 	public float speed = 10f;
+	public float rot_speed = 7f;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,12 +27,12 @@ public class ship_movement : MonoBehaviour
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                rb.AddTorque(0f, -7f, 0f);
+                rb.AddTorque(0f, -rot_speed, 0f);
             }
 
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                rb.AddTorque(0f, 7f, 0f);
+                rb.AddTorque(0f, rot_speed, 0f);
             }
         }
 
@@ -39,10 +40,7 @@ public class ship_movement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "cube")
-        {
-            rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
-        }
+		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
     }
     void Update()
     {

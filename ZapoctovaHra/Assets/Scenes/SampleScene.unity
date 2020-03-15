@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -404,6 +404,11 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2416733968201007103, guid: f903147a2af18974db4e4840b557a673,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b85c190e269e7d4abedfb7d3168d180, type: 2}
     - target: {fileID: -927199367670048503, guid: f903147a2af18974db4e4840b557a673,
         type: 3}
       propertyPath: m_Name
@@ -485,7 +490,8 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 8.7e-43, y: 1.16e-43, z: 0, w: -38.21524}
+  m_BoundingSphereOverride: {x: -2.3404263e-24, y: 2.3937171e-21, z: -3.0590932e+31,
+    w: NaN}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -534,7 +540,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e635a34b53319a4d9e1d3a1cfb63e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 6
+  rot_speed: 3
 --- !u!54 &725662052
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -643,7 +650,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 738956717}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.5, z: 220}
+  m_LocalPosition: {x: 0, y: 0, z: 220}
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_Children: []
   m_Father: {fileID: 0}
@@ -678,15 +685,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e33a081bace2b449471caf75129f03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isolated: {fileID: -927199367670048503, guid: 0ad2cb5360fcb9e408f68973ed604314,
+  isolated: {fileID: 5771166886491795940, guid: f64efcf9231a6064abd952901a48830e,
     type: 3}
-  hill: {fileID: -927199367670048503, guid: 611a6c63dd119274aad05486fe2863b4, type: 3}
-  L: {fileID: -927199367670048503, guid: 9e3fbb728acc7724e8e3a392d516af83, type: 3}
-  one_line: {fileID: -927199367670048503, guid: b61dbd7ee973dda4388f8e22240f1ef9,
+  hill: {fileID: 3632188090571755132, guid: 386e3e342c2cdca4783e146d9ffb7158, type: 3}
+  L: {fileID: 8188384007777986960, guid: 994293d00168f1d4bbc13fac1262bcbc, type: 3}
+  one_line: {fileID: 1305178197327154785, guid: c57cff17aac562440969ff1ebdd4966a,
     type: 3}
-  two_lines: {fileID: -927199367670048503, guid: 464b2931c4e08814f92492cd162890ce,
+  two_lines: {fileID: 1252785482956798653, guid: 475b3bdb641cfba4cabf121bc7a03c81,
     type: 3}
-  full: {fileID: -927199367670048503, guid: be1cc3c24a9953e4fb87924840a1a747, type: 3}
+  full: {fileID: 6964780624686229561, guid: 971b6788bac44b34db7968db517bca74, type: 3}
 --- !u!4 &932247894
 Transform:
   m_ObjectHideFlags: 0

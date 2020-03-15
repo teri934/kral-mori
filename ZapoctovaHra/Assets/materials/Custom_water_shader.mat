@@ -25,9 +25,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_69E9C3FA: 15.44
-    - Vector1_C398FF87: 0.1
-    - Vector1_E0155011: 0.29
+    - Vector1_69E9C3FA: 15.77
+    - Vector1_C398FF87: 0
+    - Vector1_E0155011: 5
     - _Glossiness: 0.5
     - _HighlightThresholdMax: 1
     - _Metallic: 0

@@ -6,19 +6,27 @@ public class camera_movement : MonoBehaviour
 {
     public GameObject ship;
 	const int max_dist_square = 13000;
+	const float def_wave_amp = 0.0001f;
+	const float def_wave_freq = 4;
     Vector3 last;
-    // Start is called before the first frame update
+	Vector3 ship_position;
+	float dy;
+	float wave_amp = def_wave_amp;
+	float wave_freq = def_wave_freq;
+	
+
     void Start()
     {
         last = ship.transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
+		ship_position = ship.transform.position;
 		//ship tracking
-        transform.Translate(ship.transform.position - last, Space.World);
-        last = ship.transform.position;
+        transform.Translate(ship_position - last, Space.World);
+		transform.Translate(dy*(ship_position-transform.position));
+        last = ship_position;
 		
         if ((ship.transform.position - transform.position).sqrMagnitude < max_dist_square)
         {
@@ -37,5 +45,20 @@ public class camera_movement : MonoBehaviour
                 transform.Translate(Input.GetAxis("Mouse ScrollWheel") * (ship.transform.position - transform.position), Space.World);
             }
         }
+		dy = wave_amp*Mathf.Sin(wave_freq*Time.time);
     }
+	
+	IEnumerator shakeTimer(float amplitude)
+    {
+		wave_amp = amplitude;
+		wave_freq = 40;
+        yield return new WaitForSeconds(0.5f);
+		wave_amp = def_wave_amp;
+		wave_freq = def_wave_freq;
+    }
+	
+	public void Shake(float amplitude)
+	{
+		StartCoroutine(shakeTimer(amplitude));
+	}
 }

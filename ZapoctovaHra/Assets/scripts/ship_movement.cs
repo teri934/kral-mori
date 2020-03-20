@@ -9,6 +9,8 @@ public class ship_movement : MonoBehaviour
     private bool anchor;
     private bool shoot;
     private healthbar bar;
+	private camera_movement Camera;
+	
     public GameObject ball;
     public float ball_force = 1500f;
 	public float speed = 10f;
@@ -23,6 +25,7 @@ public class ship_movement : MonoBehaviour
         shoot = true;
         health = 1f;
         bar = FindObjectOfType<healthbar>();
+		Camera = FindObjectOfType<camera_movement>();
     }
 
     // Update is called once per frame
@@ -43,12 +46,14 @@ public class ship_movement : MonoBehaviour
             {
                 rb.AddTorque(0f, rot_speed, 0f);
             }
+
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
 		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
+		Camera.Shake(0.002f);
         health -= damage_scale;
         if (health >= 0)
             bar.SetSize(health);
@@ -57,6 +62,7 @@ public class ship_movement : MonoBehaviour
     IEnumerator Shoot()
     {
         shoot = false;
+		Camera.Shake(0.001f);
         for (int i = -2; i < 3; i++)
         {
             GameObject new_ball = Instantiate(ball, transform.position + transform.forward * i, Quaternion.identity);

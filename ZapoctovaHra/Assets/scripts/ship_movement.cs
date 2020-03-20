@@ -8,16 +8,21 @@ public class ship_movement : MonoBehaviour
     private float angle;
     private bool anchor;
     private bool shoot;
+    private healthbar bar;
     public GameObject ball;
     public float ball_force = 1500f;
 	public float speed = 10f;
-	public float rot_speed = 7f;
+    public float rot_speed = 7f;
+    private float health;
+    const float damage_scale = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         anchor = false;
         shoot = true;
+        health = 1f;
+        bar = FindObjectOfType<healthbar>();
     }
 
     // Update is called once per frame
@@ -44,6 +49,9 @@ public class ship_movement : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
+        health -= damage_scale;
+        if (health >= 0)
+            bar.SetSize(health);
     }
 
     IEnumerator Shoot()

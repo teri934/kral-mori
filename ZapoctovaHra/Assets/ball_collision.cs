@@ -19,7 +19,7 @@ public class ball_collision : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag != "ship")
+        if (other.gameObject.tag == "island")
         {
             gameObject.GetComponent<ParticleSystem>().Play();
             Destroy(rb);

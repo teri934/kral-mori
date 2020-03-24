@@ -85,6 +85,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: bridge
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 464b2931c4e08814f92492cd162890ce,
+        type: 3}
+      propertyPath: m_TagString
+      value: island
+      objectReference: {fileID: 0}
     - target: {fileID: 2834078683115760881, guid: 464b2931c4e08814f92492cd162890ce,
         type: 3}
       propertyPath: m_Mesh

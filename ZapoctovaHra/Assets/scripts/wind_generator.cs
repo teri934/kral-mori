@@ -9,6 +9,7 @@ public class wind_generator : MonoBehaviour
     bool start;
     public GameObject arrow;
     float angle;
+	int wind_interval = 60;
     Quaternion to_rotation;
     // Start is called before the first frame update
     void Start()
@@ -22,7 +23,7 @@ public class wind_generator : MonoBehaviour
         start = false;
         position = new Vector3(rd.Next(-5, 5), 0, rd.Next(-5, 5));
         angle = Vector3.Angle(Vector3.forward, position);
-        yield return new WaitForSeconds(60);
+        yield return new WaitForSeconds(wind_interval);
         start = true;
     }
 

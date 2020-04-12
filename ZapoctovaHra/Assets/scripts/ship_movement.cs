@@ -35,18 +35,21 @@ public class ship_movement : MonoBehaviour
 
         if (anchor == false)
         {
+            if (Input.GetKey(KeyCode.F))    //na skusanie, ked sa nam nechce cakat na vietor 
+            {
+                rb.AddForce(speed * 2 * transform.forward);
+            }
+
             rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 rb.AddTorque(0f, -rot_speed, 0f);
             }
-
             if (Input.GetKey(KeyCode.RightArrow))
             {
                 rb.AddTorque(0f, rot_speed, 0f);
             }
-
         }
     }
 

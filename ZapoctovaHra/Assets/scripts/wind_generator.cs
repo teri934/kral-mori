@@ -22,7 +22,7 @@ public class wind_generator : MonoBehaviour
         start = false;
         position = new Vector3(rd.Next(-5, 5), 0, rd.Next(-5, 5));
         angle = Vector3.Angle(Vector3.forward, position);
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(60);
         start = true;
     }
 

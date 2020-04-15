@@ -28,24 +28,29 @@ public class WorldLoader
 	public static int world_size;
 	private static System.Random rand;
 	
-	private static void WriteMap(string filePath){
+	private static void WriteMap(string filePath)
+	{
 		byte[] serializedMap = new byte[world_size * world_size + 16]; //16 je velikost hlavicky souboru s velikosti mapy a pozici hrace
 		
 		//tvorba hlavicky
 		byte[] worldSizeinByteArray = BitConverter.GetBytes(world_size);
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 4; i++)
+		{
 			serializedMap[i] = worldSizeinByteArray[i];
 		}
 		
-		for(int i = 0; i < world_size; i++){
-			for(int j = 0; j < world_size; j++){
+		for(int i = 0; i < world_size; i++)
+		{
+			for(int j = 0; j < world_size; j++)
+			{
 				serializedMap[16 + i * world_size + j] = world_map[i][j];
 			}
 		}
 		File.WriteAllBytes(filePath, serializedMap);
 	}
 		
-	private static void ReadMap(string filePath){
+	private static void ReadMap(string filePath)
+	{
 		byte[] serializedMap;
 		
 		//prvni precteme hlavicku souboru
@@ -60,7 +65,8 @@ public class WorldLoader
 		
 		//az potom data o svete
 		serializedMap = File.ReadAllBytes(filePath);
-		for(int i = 0; i < serializedMap.Length - 16; i++){
+		for(int i = 0; i < serializedMap.Length - 16; i++)
+		{
 			world_map[i >> size_as_power_of_2][i % world_size] = serializedMap[i + 15];
 		}
 
@@ -69,29 +75,45 @@ public class WorldLoader
 		
 	}
 	
-	private static void PerlinGenerate(){
-		System.Random rand = new System.Random(); //mohl by chtit seed
-		for(int y = 0;y < world_size;y++){
-			for(int x = 0;x < world_size;x++){
-				world_map[y][x] = (byte)Mathf.Round(Mathf.PerlinNoise(10 * (float)x / 128,10 * (float)y / 128) / 1.3f);
-				world_map[y][x] *= (byte)rand.Next(1,5); 
+	private static void PerlinGenerate()
+	{
+		rand = new System.Random(); //mohl by chtit seed
+		int perlin_offset = 0;  //rand.Next(0, int.MaxValue);
+		for(int y = 0; y < world_size; y++)
+		{
+			for(int x = 0; x < world_size; x++)
+			{
+				world_map[y][x] = (byte)Mathf.Round(Mathf.PerlinNoise((10 * (float)x / 128) + perlin_offset, (10 * (float)y / 128) + perlin_offset) / 1.3f);
+				world_map[y][x] *= RandomPOIDistribution();
 			}
 		}
 	}
+
+	private static byte RandomPOIDistribution()
+	{
+		int number = rand.Next(1, 17);
+		int value_island = -(int)Math.Floor(Math.Sqrt(-number + 16)) + 4;
+
+		return (byte)value_island;
+	}
+
 	//VELIKOST MAPY MUSI BYT MOCNINA 2!!!
 	public static void LoadMap(string filePath, int size){
 		world_size = size;
 		world_map = new byte[world_size][];			
-		for(int i = 0; i < world_size; i++){
+		for(int i = 0; i < world_size; i++)
+		{
 			world_map[i] = new byte[world_size];
 		}
 		
-		if (File.Exists(filePath)) {
+		if (File.Exists(filePath)) 
+		{
 			Debug.Log("Soubor existuje.");
 			ReadMap(filePath);
 		}
 		
-		else{
+		else
+		{
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
 			WriteMap(filePath);
@@ -103,7 +125,6 @@ public class WorldLoader
 
 public class Chunk : ScriptableObject
 {
-	public int[][] chunk_matrix;
 	const byte size = 16;
 	int[] value_array = new int[4] { 4, 8, 2, 1 };
 	List<GameObject> existingIslands = new List<GameObject>();
@@ -158,20 +179,19 @@ public class Chunk : ScriptableObject
 	
 	
 	//inits matrix of given size
-	public Chunk(int pos_x, int pos_y){
+	public Chunk(int pos_x, int pos_y)
+	{
 		this.pos_x = pos_x;
 		this.pos_y = pos_y;
-		chunk_matrix = new int[16][];
-		for(int i = 0; i < 16; i++){
-			chunk_matrix[i] = new int[16];
-		}
 	}
 	
 	public void InstinScene(){	
 	
-	for(int y = 0;y < chunk_matrix.Length; y++){
-			for(int x = 0;x < chunk_matrix.Length; x++){
-				if(chunk_matrix[y][x] > 0)
+	for(int y = 0; y < size; y++)
+		{
+			for(int x = 0; x < size; x++)
+			{
+				if(ReturnPositionWorldMap(y, x) > 0)
 				{
 					type_of_island = TypeOfIsland(y, x);
 					parameters = models[type_of_island];
@@ -179,9 +199,9 @@ public class Chunk : ScriptableObject
 					existingIslands.Add(new_island);
 					new_island.GetComponent<Transform>().rotation = Quaternion.Euler(0f, (float)parameters.Item2, 0f);
 				}
-				if(chunk_matrix[y][x] > 1)
+				if(ReturnPositionWorldMap(y, x) > 1)
 				{
-					int POIid = chunk_matrix[y][x] - 2;
+					int POIid = ReturnPositionWorldMap(y, x) - 2;
 					new_POI = Instantiate(POIs_array[POIid],new Vector3(pos_x + x * 10, 10, pos_y + y * 10), Quaternion.identity);
 					existingIslands.Add(new_POI);
 				}
@@ -189,36 +209,34 @@ public class Chunk : ScriptableObject
 		}
 	}
 	
-	public void RemoveIslands(){
+	private byte ReturnPositionWorldMap(int y, int x)
+	{
+		byte value = WorldLoader.world_map[((y + (pos_y / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size][((x + (pos_x / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size];
+		return value;
+	}
+	public void RemoveIslands()
+	{
 		foreach (GameObject island in existingIslands){
 			Destroy(island);
 		}
 	
 	}
 	
-	//fills matrix with random islands
-	public void generateIslands(){
-		for(int y = 0; y < size; y++){
-			for(int x = 0; x < size; x++){
-				chunk_matrix[y][x] = WorldLoader.world_map[((y + (pos_y / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size][((x + (pos_x / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size];
-				//Debug.Log(WorldLoader.world_map[(y+(pos_y/10)+WorldLoader.world_size)%WorldLoader.world_size][(x+(pos_x/10)+WorldLoader.world_size)%WorldLoader.world_size]);
-			}
-		}
-		
-	}
 	//prints matrix to Debug.Log
-	public void printChunk(){
+	public void printChunk()
+	{
 		string matice = System.Environment.NewLine;
-		for(int i = 0; i < chunk_matrix.Length;i++){
-			for(int j = 0; j < chunk_matrix[0].Length;j++){
-				matice = matice + chunk_matrix[i][j] + " ";
+		for(int i = 0; i < size; i++)
+		{
+			for(int j = 0; j < size; j++){
+				matice = matice + ReturnPositionWorldMap(i, j) + " ";
 			}
 			matice += System.Environment.NewLine;
 		}
 		Debug.Log(matice);
 	}
 
-	public int TypeOfIsland(int x, int y)
+	private int TypeOfIsland(int x, int y)
 	{
 		int value_of_island = 0;
 		int pointer = 0;
@@ -228,9 +246,9 @@ public class Chunk : ScriptableObject
 			{
 				if (Mathf.Abs(dx) + Mathf.Abs(dy) == 1)
 				{
-					if ((x + dx < chunk_matrix.Length) && (y + dy < chunk_matrix.Length) && (x + dx > -1) && (y + dy > -1))
+					if ((x + dx <= size) && (y + dy <= size) && (x + dx >= -1) && (y + dy >= -1))
 					{
-						if (chunk_matrix[x + dx][y + dy] > 0)
+						if (ReturnPositionWorldMap(x + dx, y + dy) > 0)
 						{
 							value_of_island += value_array[pointer];
 						}

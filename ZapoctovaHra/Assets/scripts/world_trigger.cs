@@ -13,7 +13,7 @@ public class world_trigger : MonoBehaviour
 		for(int j = 160; j >= -160; j-=160){
 			for(int i = -160; i <= 160; i+=160){
 				Chunk chunk = new Chunk(i, j);
-				chunk.generateIslands();
+				//chunk.generateIslands();
 				chunk.InstinScene();
 				activeChunks[pointer] = chunk;
 				pointer += 1;
@@ -47,7 +47,6 @@ public class world_trigger : MonoBehaviour
 						active_x = activeChunks[arrayStart + 1].pos_x + i;
 						Chunk chunk = new Chunk(active_x, active_y);
 						activeChunks[(arrayStart + pointer_activeChunks) % 9] = chunk;
-						chunk.generateIslands();
 						chunk.InstinScene();
 						pointer_activeChunks++;
 					}
@@ -67,7 +66,6 @@ public class world_trigger : MonoBehaviour
 						active_x = activeChunks[arrayStart + 1].pos_x + i;
 						Chunk chunk = new Chunk(active_x, active_y);
 						activeChunks[(arrayStart + 6 + pointer_activeChunks) % 9] = chunk;
-						chunk.generateIslands();
 						chunk.InstinScene();
 						pointer_activeChunks++;
 					}
@@ -97,7 +95,6 @@ public class world_trigger : MonoBehaviour
 						active_y = activeChunks[arrayStart + 1].pos_y + pointer_coordinates;
 						Chunk chunk = new Chunk(active_x, active_y);
 						activeChunks[(arrayStart + i) % 9] = chunk;
-						chunk.generateIslands();
 						chunk.InstinScene();
 						pointer_coordinates -= 160;
 					}
@@ -126,7 +123,6 @@ public class world_trigger : MonoBehaviour
 						active_y = activeChunks[arrayStart + 1].pos_y + pointer_coordinates;
 						Chunk chunk = new Chunk(active_x, active_y);
 						activeChunks[(arrayStart + i) % 9] = chunk;
-						chunk.generateIslands();
 						chunk.InstinScene();
 						pointer_coordinates -= 160;
 					}

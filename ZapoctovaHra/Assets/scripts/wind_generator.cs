@@ -9,7 +9,7 @@ public class wind_generator : MonoBehaviour
     bool start;
     public GameObject arrow;
     float angle;
-	int wind_interval = 60;
+	int wind_interval = 10;
     Quaternion to_rotation;
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,8 @@ public class wind_generator : MonoBehaviour
     {
         start = false;
         position = new Vector3(rd.Next(-5, 5), 0, rd.Next(-5, 5));
-        angle = Vector3.Angle(Vector3.forward, position);
+        angle = Vector3.SignedAngle(Vector3.forward, position, Vector3.up);
+        Debug.Log("sipka: " + angle);
         yield return new WaitForSeconds(wind_interval);
         start = true;
     }
@@ -33,7 +34,7 @@ public class wind_generator : MonoBehaviour
         if (start == true)
         {
             StartCoroutine(GenerateWind());
-            to_rotation = Quaternion.Euler(0f, 0f, angle);
+            to_rotation = Quaternion.Euler(0f, 0f, -angle);
         }
         arrow.transform.rotation = Quaternion.Slerp(arrow.transform.rotation, to_rotation, Time.deltaTime);
     }

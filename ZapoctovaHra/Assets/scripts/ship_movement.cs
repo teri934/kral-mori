@@ -1,30 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class ship_movement : MonoBehaviour
 {
     private Rigidbody rb;
     private float angle;
-    private bool anchor;
-    private bool shoot;
-    private healthbar bar;
+    private bool anchor = false;
+    private bool shoot = true;
+    private float shoot_bar_size = 1f;
+    private healthbar health_bar;
+    private shootbar shoot_bar;
 	private camera_movement Camera;
 	
     public GameObject ball;
     public float ball_force = 1500f;
 	public float speed = 10f;
     public float rot_speed = 7f;
-    private float health;
+    private float health = 1f;
     const float damage_scale = 0.1f;
+    private const float shoot_add_interval = 0.25f;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        anchor = false;
-        shoot = true;
-        health = 1f;
-        bar = FindObjectOfType<healthbar>();
+        health_bar = FindObjectOfType<healthbar>();
+        shoot_bar = FindObjectOfType<shootbar>();
 		Camera = FindObjectOfType<camera_movement>();
     }
 
@@ -41,6 +41,7 @@ public class ship_movement : MonoBehaviour
             }
 
             rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
+            Debug.Log("lod: " + Mathf.Cos(angle * (Mathf.PI / 180)));
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -59,19 +60,21 @@ public class ship_movement : MonoBehaviour
 		Camera.Shake(0.002f);
         health -= damage_scale;
         if (health >= 0)
-            bar.SetSize(health);
+            health_bar.SetSize(health);
     }
 
     IEnumerator Shoot()
     {
+        shoot_bar_size = 0f;
+        shoot_bar.SetSize(shoot_bar_size);
         shoot = false;
 		Camera.Shake(0.001f);
-        for (int i = -2; i < 3; i++)
+        for (int i = -1; i < 2; i++)
         {
             GameObject new_ball = Instantiate(ball, transform.position + transform.forward * i, Quaternion.identity);
             new_ball.GetComponent<Rigidbody>().AddForce((transform.right + transform.up) * ball_force, ForceMode.Impulse);
         }
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(4);
         shoot = true;
     }
 
@@ -81,7 +84,7 @@ public class ship_movement : MonoBehaviour
         {
             anchor = !anchor;
         }
-        angle = Vector3.Angle(wind_generator.position, transform.forward);
+        angle = Vector3.Angle(transform.forward, wind_generator.position);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -89,6 +92,12 @@ public class ship_movement : MonoBehaviour
             {
                 StartCoroutine(Shoot());
             }
+        }
+
+        if (shoot_bar_size < 1)
+        {
+            shoot_bar_size += Time.deltaTime * shoot_add_interval;
+            shoot_bar.SetSize(shoot_bar_size);
         }
     }
 }

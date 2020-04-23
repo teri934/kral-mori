@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - cube
   - ship
   - island
+  - ball
   layers:
   - Default
   - TransparentFX

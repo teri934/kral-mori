@@ -6,6 +6,7 @@ public class ball_collision : MonoBehaviour
 
 {
     private Rigidbody rb;
+    public bool enemy_ball = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +21,13 @@ public class ball_collision : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "island")
+        {
+            gameObject.GetComponent<ParticleSystem>().Play();
+            Destroy(rb);
+            StartCoroutine(DestroyBall());
+        }
+
+        if (other.gameObject.tag == "ship" && enemy_ball)
         {
             gameObject.GetComponent<ParticleSystem>().Play();
             Destroy(rb);

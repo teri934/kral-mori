@@ -41,7 +41,6 @@ public class ship_movement : MonoBehaviour
             }
 
             rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
-            Debug.Log("lod: " + Mathf.Cos(angle * (Mathf.PI / 180)));
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -61,6 +60,18 @@ public class ship_movement : MonoBehaviour
         health -= damage_scale;
         if (health >= 0)
             health_bar.SetSize(health);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "ball")
+        {
+            rb.AddForce(10f * -transform.forward, ForceMode.Impulse);
+            Camera.Shake(0.002f);
+            health -= damage_scale;
+            if (health >= 0)
+                health_bar.SetSize(health);
+        }
     }
 
     IEnumerator Shoot()

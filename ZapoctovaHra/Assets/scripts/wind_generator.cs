@@ -23,7 +23,6 @@ public class wind_generator : MonoBehaviour
         start = false;
         position = new Vector3(rd.Next(-5, 5), 0, rd.Next(-5, 5));
         angle = Vector3.SignedAngle(Vector3.forward, position, Vector3.up);
-        Debug.Log("sipka: " + angle);
         yield return new WaitForSeconds(wind_interval);
         start = true;
     }

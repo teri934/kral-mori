@@ -58,7 +58,7 @@ public class ship_movement : MonoBehaviour
 		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
 		Camera.Shake(0.002f);
         health -= damage_scale;
-        if (health >= 0)
+        if (health >= 0.1f)
             health_bar.SetSize(health);
     }
 
@@ -66,11 +66,14 @@ public class ship_movement : MonoBehaviour
     {
         if (other.gameObject.tag == "ball")
         {
-            rb.AddForce(10f * -transform.forward, ForceMode.Impulse);
+            if (other.gameObject.GetComponent<ball_collision>().enemy_ball)
+            {
+                rb.AddForce(10f * -transform.forward, ForceMode.Impulse);
+                health -= damage_scale;
+                if (health >= -0.1f)
+                    health_bar.SetSize(health);
+            }
             Camera.Shake(0.002f);
-            health -= damage_scale;
-            if (health >= 0)
-                health_bar.SetSize(health);
         }
     }
 

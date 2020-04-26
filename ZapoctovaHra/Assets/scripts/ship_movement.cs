@@ -10,8 +10,9 @@ public class ship_movement : MonoBehaviour
     private float shoot_bar_size = 1f;
     private healthbar health_bar;
     private shootbar shoot_bar;
-	private camera_movement Camera;
-	
+    private camera_movement Camera;
+
+    private GameObject anchor_image;
     public GameObject ball;
     public float ball_force = 1500f;
 	public float speed = 10f;
@@ -26,6 +27,9 @@ public class ship_movement : MonoBehaviour
         health_bar = FindObjectOfType<healthbar>();
         shoot_bar = FindObjectOfType<shootbar>();
 		Camera = FindObjectOfType<camera_movement>();
+        anchor_image = GameObject.Find("anchor");
+
+        anchor_image.SetActive(false);
     }
 
     // Update is called once per frame
@@ -97,6 +101,14 @@ public class ship_movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             anchor = !anchor;
+            if (anchor)
+            {
+                anchor_image.SetActive(true);
+            }
+            else
+            {
+                anchor_image.SetActive(false);
+            }
         }
         angle = Vector3.Angle(transform.forward, wind_generator.position);
 

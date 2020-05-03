@@ -10,7 +10,7 @@ public class ship_movement : MonoBehaviour
     private float shoot_bar_size = 1f;
     private healthbar health_bar;
     private shootbar shoot_bar;
-    private camera_movement Camera;
+    private camera_movement camera;
 
     private GameObject anchor_image;
     public GameObject ball;
@@ -20,13 +20,19 @@ public class ship_movement : MonoBehaviour
     private float health = 1f;
     const float damage_scale = 0.1f;
     private const float shoot_add_interval = 0.25f;
+
+    public int counter_oranges = 5;
+    public int counter_coconuts = 9;
+
+    Ray ray;
+    RaycastHit hit;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         health_bar = FindObjectOfType<healthbar>();
         shoot_bar = FindObjectOfType<shootbar>();
-		Camera = FindObjectOfType<camera_movement>();
+		camera = FindObjectOfType<camera_movement>();
         anchor_image = GameObject.Find("anchor");
 
         anchor_image.SetActive(false);
@@ -60,7 +66,7 @@ public class ship_movement : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
-		Camera.Shake(0.002f);
+		camera.Shake(0.002f);
         health -= damage_scale;
         if (health >= 0.1f)
             health_bar.SetSize(health);
@@ -77,7 +83,7 @@ public class ship_movement : MonoBehaviour
                 if (health >= -0.1f)
                     health_bar.SetSize(health);
             }
-            Camera.Shake(0.002f);
+            camera.Shake(0.002f);
         }
     }
 
@@ -86,17 +92,35 @@ public class ship_movement : MonoBehaviour
         shoot_bar_size = 0f;
         shoot_bar.SetSize(shoot_bar_size);
         shoot = false;
-		Camera.Shake(0.001f);
+		camera.Shake(0.001f);
         for (int i = -1; i < 2; i++)
         {
-            GameObject new_ball = Instantiate(ball, transform.position + transform.forward * i, Quaternion.identity);
+            GameObject new_ball = Instantiate(ball, transform.position + transform.forward * 2*i, Quaternion.identity);
             new_ball.GetComponent<Rigidbody>().AddForce((transform.right + transform.up) * ball_force, ForceMode.Impulse);
         }
+        counter_coconuts -= 1;
         yield return new WaitForSeconds(4);
         shoot = true;
     }
 
-    void Update()
+    void Shooting()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (shoot == true && counter_coconuts > 0)
+            {
+                StartCoroutine(Shoot());
+            }
+        }
+
+        if (shoot_bar_size < 1)
+        {
+            shoot_bar_size += Time.deltaTime * shoot_add_interval;
+            shoot_bar.SetSize(shoot_bar_size);
+        }
+    }
+
+    void Anchor()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -110,20 +134,34 @@ public class ship_movement : MonoBehaviour
                 anchor_image.SetActive(false);
             }
         }
-        angle = Vector3.Angle(transform.forward, wind_generator.position);
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+    void Collect()
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            if (shoot == true)
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
             {
-                StartCoroutine(Shoot());
+                if (hit.collider.gameObject.tag == "coconut")
+                {
+                    counter_coconuts += 1;
+                    Destroy(hit.collider.gameObject);
+                }
+                if (hit.collider.gameObject.tag == "orange")
+                {
+                    counter_oranges += 1;
+                    Destroy(hit.collider.gameObject);
+                }
             }
         }
+    }
 
-        if (shoot_bar_size < 1)
-        {
-            shoot_bar_size += Time.deltaTime * shoot_add_interval;
-            shoot_bar.SetSize(shoot_bar_size);
-        }
+    void Update()
+    {
+        angle = Vector3.Angle(transform.forward, wind_generator.position);
+        Anchor();
+        Shooting();
+        Collect();
     }
 }

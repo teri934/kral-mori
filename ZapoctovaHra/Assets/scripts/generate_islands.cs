@@ -8,10 +8,12 @@ public class generate_islands : MonoBehaviour
 {
 
 	// Start is called before the first frame update
+	private menu_handler menu_handler;
 	void Start()
     {
-		WorldLoader.LoadMap("svet2.world",32);
-
+		menu_handler = FindObjectOfType<menu_handler>();
+		WorldLoader.LoadMap(menu_handler.world_name,32);
+		Destroy(menu_handler.gameObject);
     }
 
     // Update is called once per frame
@@ -106,17 +108,17 @@ public class WorldLoader
 			world_map[i] = new byte[world_size];
 		}
 		
-		if (File.Exists(filePath)) 
+		if (File.Exists("Saves/" + filePath)) 
 		{
 			Debug.Log("Soubor existuje.");
-			ReadMap(filePath);
+			ReadMap("Saves/" + filePath);
 		}
 		
 		else
 		{
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
-			WriteMap(filePath);
+			WriteMap("Saves/" + filePath);
 			Debug.Log("Soubor vytvoren.");			
 		}
 		

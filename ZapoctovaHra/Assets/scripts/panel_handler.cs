@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class panel_handler : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject PausePanel;
-    public GameObject GameOverPanel;
+    public GameObject pause_panel;
+    public GameObject game_over_panel;
     void Start()
     {
         Time.timeScale = 1;
-        GameOverPanel.SetActive(false);
-        PausePanel.SetActive(false);
+        game_over_panel.SetActive(false);
+        pause_panel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -22,38 +23,37 @@ public class panel_handler : MonoBehaviour
             if (Time.timeScale == 1)
             {
                 Time.timeScale = 0;
-                ShowPaused();
+                pause_panel.SetActive(true);
             }
             else
             {
                 Time.timeScale = 1;
-                HidePaused();
+                pause_panel.SetActive(false);
             }
         }
     }
 
-    public void ShowPaused()
-    {
-        PausePanel.SetActive(true);
-    }
-
-    public void HidePaused()
-    {
-        PausePanel.SetActive(false);
-    }
-
-    public void PauseControl()
+    public void ResumeControl()
     {
         if (Time.timeScale == 0)
         {
             Time.timeScale = 1;
-            HidePaused();
+            pause_panel.SetActive(false);
+        }
+    }
+
+    public void MainMenuControl()
+    {
+        if (Time.timeScale == 0)
+        {
+            pause_panel.SetActive(false);
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
     public void GameOver()
     {
         Time.timeScale = 0;
-        GameOverPanel.SetActive(true);
+        game_over_panel.SetActive(true);
     }
 }

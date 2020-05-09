@@ -12,7 +12,7 @@ public class generate_islands : MonoBehaviour
 	void Start()
     {
 		menu_handler = FindObjectOfType<menu_handler>();
-		WorldLoader.LoadMap(menu_handler.world_name,32);
+		WorldLoader.LoadMap(menu_handler.world_name + ".world",32);
 		Destroy(menu_handler.gameObject);
     }
 

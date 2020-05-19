@@ -71,6 +71,8 @@ public class WorldLoader
 		ship_movement.objInScene.health = (Convert.ToSingle(stateFile.ReadLine())/255);
 		ship_movement.objInScene.RefreshHealth();
 		
+		stateFile.Close();
+		
 		
 	}
 	

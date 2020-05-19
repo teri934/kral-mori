@@ -14,10 +14,11 @@ public class ship_movement : MonoBehaviour
 
     private GameObject anchor_image;
     public GameObject ball;
+	public static ship_movement objInScene;
     public float ball_force = 1500f;
 	public float speed = 10f;
     public float rot_speed = 7f;
-    private float health = 1f;
+    public float health = 1f;
     const float damage_scale = 0.1f;
     private const float shoot_add_interval = 0.25f;
 
@@ -34,8 +35,9 @@ public class ship_movement : MonoBehaviour
         shoot_bar = FindObjectOfType<shootbar>();
 		camera = FindObjectOfType<camera_movement>();
         anchor_image = GameObject.Find("anchor");
-
+		
         anchor_image.SetActive(false);
+		FindObjectinScene();
     }
 
     // Update is called once per frame
@@ -86,6 +88,10 @@ public class ship_movement : MonoBehaviour
             camera.Shake(0.002f);
         }
     }
+	
+	public void RefreshHealth(){
+		health_bar.SetSize(health);
+	}
 
     IEnumerator Shoot()
     {
@@ -156,6 +162,10 @@ public class ship_movement : MonoBehaviour
             }
         }
     }
+	
+	static void FindObjectinScene(){
+		objInScene = FindObjectOfType<ship_movement>();
+	}
 
     void Update()
     {

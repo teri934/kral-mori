@@ -44,6 +44,8 @@ public class panel_handler : MonoBehaviour
 
     public void MainMenuControl()
     {
+		WorldLoader.SaveState();
+		
         if (Time.timeScale == 0)
         {
             pause_panel.SetActive(false);

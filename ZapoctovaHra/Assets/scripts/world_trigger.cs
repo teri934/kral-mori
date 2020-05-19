@@ -9,16 +9,7 @@ public class world_trigger : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		int pointer = 0;
-		for(int j = 160; j >= -160; j-=160){
-			for(int i = -160; i <= 160; i+=160){
-				Chunk chunk = new Chunk(i, j);
-				//chunk.generateIslands();
-				chunk.InstinScene();
-				activeChunks[pointer] = chunk;
-				pointer += 1;
-			}
-		}
+
     }
 
     // Update is called once per frame
@@ -26,6 +17,28 @@ public class world_trigger : MonoBehaviour
     {
         
     }
+	
+	public void SpawnPlace(int x, int y){
+		int pointer = 0;
+		
+		ship_movement player = FindObjectOfType<ship_movement>();
+		camera_movement camera = FindObjectOfType<camera_movement>();
+		int chunk_x = 160*(x/160);
+		int chunk_y = 160*(y/160);
+		
+		
+		for(int j = 160; j >= -160; j-=160){
+			for(int i = -160; i <= 160; i+=160){
+				Chunk chunk = new Chunk(i+chunk_x, j+chunk_y);
+				chunk.InstinScene();
+				activeChunks[pointer] = chunk;
+				pointer += 1;
+			}
+		}
+		transform.position = new Vector3(80+chunk_x,2,80+chunk_y);
+		player.transform.position = new Vector3(x,2,y);
+		camera.JumpToShip();
+	}
 	
 	void OnTriggerExit(Collider collider){
 		if(collider.gameObject.tag == "ship"){

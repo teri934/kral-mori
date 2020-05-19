@@ -20,6 +20,10 @@ public class camera_movement : MonoBehaviour
         last = ship.transform.position;
     }
 
+	public void JumpToShip(){
+		transform.position = ship.transform.position + new Vector3(0,50,-72);
+	}
+	
     void Update()
     {
 		ship_position = ship.transform.position;

@@ -9,10 +9,14 @@ public class generate_islands : MonoBehaviour
 
 	// Start is called before the first frame update
 	private menu_handler menu_handler;
+	private world_trigger trig;
+
 	void Start()
     {
 		menu_handler = FindObjectOfType<menu_handler>();
-		WorldLoader.LoadMap(menu_handler.world_name + ".world",32);
+		WorldLoader.LoadMap(menu_handler.world_name,32);
+		trig = FindObjectOfType<world_trigger>();
+		trig.SpawnPlace(WorldLoader.spawnX,WorldLoader.spawnY);
 		Destroy(menu_handler.gameObject);
     }
 
@@ -29,13 +33,54 @@ public class WorldLoader
 	public static byte[][] world_map;
 	public static int world_size;
 	private static System.Random rand;
+	private static string activeMapFilename;
+	public static int spawnX;
+	public static int spawnY;
+	
+	const int header_size = 16;
+	
+	public static void SaveState(){
+		SaveState(activeMapFilename);
+	}
+	
+	private static int mod(int x, int m) {
+		return (x%m + m)%m;
+	}
+	
+	private static void SaveState(string filename){
+		StreamWriter stateFile = new StreamWriter(filename+".state");
+		ship_movement player = ship_movement.objInScene;
+		stateFile.WriteLine(mod((int)player.transform.position.x,world_size*10));
+		stateFile.WriteLine(mod((int)player.transform.position.z,world_size*10));
+		stateFile.WriteLine(player.counter_oranges);
+		stateFile.WriteLine(player.counter_coconuts);
+		stateFile.WriteLine((int)(player.health*255));
+		
+		stateFile.Close();
+	}		
+	
+	public static void LoadState(string filename){
+		filename += ".state";
+		StreamReader stateFile = new StreamReader(filename);
+		
+		spawnX = Convert.ToInt32(stateFile.ReadLine());
+		spawnY = Convert.ToInt32(stateFile.ReadLine());
+		
+		ship_movement.objInScene.counter_oranges = Convert.ToInt32(stateFile.ReadLine());
+		ship_movement.objInScene.counter_coconuts = Convert.ToInt32(stateFile.ReadLine());
+		ship_movement.objInScene.health = (Convert.ToSingle(stateFile.ReadLine())/255);
+		ship_movement.objInScene.RefreshHealth();
+		
+		
+	}
 	
 	private static void WriteMap(string filePath)
 	{
-		byte[] serializedMap = new byte[world_size * world_size + 16]; //16 je velikost hlavicky souboru s velikosti mapy a pozici hrace
+		byte[] serializedMap = new byte[world_size * world_size + header_size]; //16 je velikost hlavicky souboru s velikosti mapy a pozici hrace
 		
 		//tvorba hlavicky
 		byte[] worldSizeinByteArray = BitConverter.GetBytes(world_size);
+		
 		for(int i = 0; i < 4; i++)
 		{
 			serializedMap[i] = worldSizeinByteArray[i];
@@ -45,14 +90,15 @@ public class WorldLoader
 		{
 			for(int j = 0; j < world_size; j++)
 			{
-				serializedMap[16 + i * world_size + j] = world_map[i][j];
+				serializedMap[header_size + i * world_size + j] = world_map[i][j];
 			}
 		}
-		File.WriteAllBytes(filePath, serializedMap);
+		File.WriteAllBytes(filePath + ".world", serializedMap);
 	}
 		
 	private static void ReadMap(string filePath)
 	{
+		filePath += ".world";
 		byte[] serializedMap;
 		
 		//prvni precteme hlavicku souboru
@@ -101,6 +147,8 @@ public class WorldLoader
 
 	//VELIKOST MAPY MUSI BYT MOCNINA 2!!!
 	public static void LoadMap(string filePath, int size){
+		filePath = "Saves/" + filePath;
+		activeMapFilename = filePath;
 		world_size = size;
 		world_map = new byte[world_size][];			
 		for(int i = 0; i < world_size; i++)
@@ -108,17 +156,19 @@ public class WorldLoader
 			world_map[i] = new byte[world_size];
 		}
 		
-		if (File.Exists("Saves/" + filePath)) 
+		if (File.Exists(filePath+".world")) 
 		{
 			Debug.Log("Soubor existuje.");
-			ReadMap("Saves/" + filePath);
+			ReadMap(filePath);
+			LoadState(filePath);
 		}
 		
 		else
 		{
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
-			WriteMap("Saves/" + filePath);
+			WriteMap(filePath);
+			//stav hrace se ulozi az pri prvnim zavreni hry.
 			Debug.Log("Soubor vytvoren.");			
 		}
 		

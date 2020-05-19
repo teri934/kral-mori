@@ -16,7 +16,7 @@ public class menu_handler : MonoBehaviour
     public Text choose_world;
     public string world_name;
     int index;
-    string[] files = Directory.GetFiles("Saves");
+    string[] files = Directory.GetFiles("Saves","*.world");
     const string no_worlds = "No worlds created yet";
     void Start()
     {
@@ -68,7 +68,7 @@ public class menu_handler : MonoBehaviour
     public void YesControl()
     {
         File.Delete("Saves/" + choose_world.text + ".world");
-        files = Directory.GetFiles("Saves");
+        files = Directory.GetFiles("Saves","*.world");
         ControlFiles();
         delete_world_panel.SetActive(false);
     }

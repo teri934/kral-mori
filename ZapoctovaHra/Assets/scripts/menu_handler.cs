@@ -70,6 +70,7 @@ public class menu_handler : MonoBehaviour
     public void YesControl()
     {
         File.Delete("Saves/" + choose_world.text + ".world");
+		File.Delete("Saves/" + choose_world.text + ".state");
         files = Directory.GetFiles("Saves","*.world");
         ControlFiles();
         delete_world_panel.SetActive(false);

@@ -15,6 +15,8 @@ public class menu_handler : MonoBehaviour
     public InputField input_field;
     public Text choose_world;
     public string world_name;
+    public Text invalid;
+    public Text generate_name;
     int index;
     string[] files = Directory.GetFiles("Saves","*.world");
     const string no_worlds = "No worlds created yet";
@@ -106,12 +108,23 @@ public class menu_handler : MonoBehaviour
     public void GenerateWorld()
     {
         world_name = input_field.text;
-        SceneManager.LoadScene("Game");
+        if (!string.IsNullOrEmpty(world_name) && world_name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
+        {
+            SceneManager.LoadScene("Game");
+        }
+        else
+        {
+            invalid.gameObject.SetActive(true);
+        }
+    }
+
+    public void HideInvalid()
+    {
+        invalid.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

@@ -17,6 +17,7 @@ public class enemy_fortress : MonoBehaviour
     // Update is called once per frame
     IEnumerator Shoot()
     {
+        gameObject.GetComponent<AudioSource>().Play();
         shoot = false;
         GameObject new_ball = Instantiate(ball, transform.position + Vector3.up * 10, Quaternion.identity);
         new_ball.GetComponent<ball_collision>().enemy_ball = true;

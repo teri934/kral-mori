@@ -8,6 +8,7 @@ using System.IO;
 public class menu_handler : MonoBehaviour
 {
     // Start is called before the first frame update
+    public GameObject click_sound;
     public GameObject main_menu_panel;
     public GameObject continue_game_panel;
     public GameObject new_game_panel;
@@ -49,6 +50,7 @@ public class menu_handler : MonoBehaviour
 
     public void BackControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         main_menu_panel.SetActive(true);
         continue_game_panel.SetActive(false);
         new_game_panel.SetActive(false);
@@ -56,6 +58,7 @@ public class menu_handler : MonoBehaviour
 
     public void DeleteWorldControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         if (choose_world.text != no_worlds)
         {
             delete_world_panel.SetActive(true);
@@ -64,11 +67,13 @@ public class menu_handler : MonoBehaviour
 
     public void NoControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         delete_world_panel.SetActive(false);
     }
 
     public void YesControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         File.Delete("Saves/" + choose_world.text + ".world");
 		File.Delete("Saves/" + choose_world.text + ".state");
         files = Directory.GetFiles("Saves","*.world");
@@ -78,12 +83,14 @@ public class menu_handler : MonoBehaviour
 
     public void ContinueGameControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         main_menu_panel.SetActive(false);
         continue_game_panel.SetActive(true);
     }
 
     public void ArrowControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         if (files.Length != 0)
         {
             index = (index + 1) % files.Length;
@@ -93,6 +100,7 @@ public class menu_handler : MonoBehaviour
 
     public void ChooseWorldControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         if (choose_world.text != no_worlds)
         {
             world_name = choose_world.text;
@@ -102,12 +110,14 @@ public class menu_handler : MonoBehaviour
 
     public void NewGameControl()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         main_menu_panel.SetActive(false);
         new_game_panel.SetActive(true);
     }
 
     public void GenerateWorld()
     {
+        click_sound.GetComponent<AudioSource>().Play();
         world_name = input_field.text;
         if (!string.IsNullOrEmpty(world_name) && world_name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
         {

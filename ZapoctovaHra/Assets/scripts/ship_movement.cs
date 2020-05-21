@@ -13,6 +13,7 @@ public class ship_movement : MonoBehaviour
     private camera_movement camera;
 
     private GameObject anchor_image;
+    public GameObject kaching_sound;
     public GameObject ball;
 	public static ship_movement objInScene;
     public float ball_force = 1500f;
@@ -115,6 +116,7 @@ public class ship_movement : MonoBehaviour
         {
             if (shoot == true && counter_coconuts > 0)
             {
+                gameObject.GetComponent<AudioSource>().Play();
                 StartCoroutine(Shoot());
             }
         }
@@ -151,11 +153,13 @@ public class ship_movement : MonoBehaviour
             {
                 if (hit.collider.gameObject.tag == "coconut")
                 {
+                    kaching_sound.GetComponent<AudioSource>().Play();
                     counter_coconuts += 1;
                     Destroy(hit.collider.gameObject);
                 }
                 if (hit.collider.gameObject.tag == "orange")
                 {
+                    kaching_sound.GetComponent<AudioSource>().Play();
                     counter_oranges += 1;
                     Destroy(hit.collider.gameObject);
                 }

@@ -30,6 +30,10 @@ public class wind_generator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (rd.Next(1, 5000) == 1)
+        {
+            gameObject.GetComponent<AudioSource>().Play();
+        }
         if (start == true)
         {
             StartCoroutine(GenerateWind());

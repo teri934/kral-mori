@@ -62,3 +62,5 @@ ZapoctovaHra/Packages/manifest.json
 ZapoctovaHra/ProjectSettings/EditorSettings.asset
 ZapoctovaHra/ProjectSettings/ProjectVersion.txt
 ZapoctovaHra/Saves/
+*.world
+*.state

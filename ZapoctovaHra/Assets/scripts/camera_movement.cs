@@ -49,7 +49,7 @@ public class camera_movement : MonoBehaviour
                 transform.Translate(Input.GetAxis("Mouse ScrollWheel") * (ship.transform.position - transform.position), Space.World);
             }
         }
-		dy = wave_amp*Mathf.Sin(wave_freq*Time.time);
+		dy = wave_amp*Mathf.Sin(wave_freq*Time.time*Time.timeScale);
     }
 	
 	IEnumerator shakeTimer(float amplitude)

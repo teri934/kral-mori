@@ -65,14 +65,22 @@ public class ship_movement : MonoBehaviour
             }
         }
     }
+	
+	private void TakeDamage(float damage){
+		health -= damage;
+        if (health > 0.0f)
+            RefreshHealth();
+		else{
+			Time.timeScale = 0;
+			Destroy(camera.GetComponent<AudioListener>());
+		}
+	}
 
     private void OnCollisionEnter(Collision collision)
     {
 		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
 		camera.Shake(0.002f);
-        health -= damage_scale;
-        if (health >= 0.1f)
-            health_bar.SetSize(health);
+        TakeDamage(damage_scale);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -82,9 +90,7 @@ public class ship_movement : MonoBehaviour
             if (other.gameObject.GetComponent<ball_collision>().enemy_ball)
             {
                 rb.AddForce(10f * -transform.forward, ForceMode.Impulse);
-                health -= damage_scale;
-                if (health >= -0.1f)
-                    health_bar.SetSize(health);
+				TakeDamage(damage_scale);
             }
             camera.Shake(0.002f);
         }
@@ -173,6 +179,9 @@ public class ship_movement : MonoBehaviour
 
     void Update()
     {
+		if(Time.timeScale == 0){
+			return;
+		}
         angle = Vector3.Angle(transform.forward, wind_generator.position);
         Anchor();
         Shooting();

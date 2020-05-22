@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy_ball: 0
+  splash: {fileID: 8300000, guid: 12b8693f61c7cdb48bd7e2cb15c3bbd9, type: 3}
 --- !u!65 &2194753891974657418
 BoxCollider:
   m_ObjectHideFlags: 0

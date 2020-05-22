@@ -28,12 +28,12 @@ public class generate_islands : MonoBehaviour
 
 }
 
-public class WorldLoader
+public static class WorldLoader
 {
 	public static byte[][] world_map;
 	public static int world_size;
 	private static System.Random rand;
-	private static string activeMapFilename;
+	public static string activeMapFilename;
 	public static int spawnX;
 	public static int spawnY;
 	

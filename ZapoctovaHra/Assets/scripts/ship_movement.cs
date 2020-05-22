@@ -12,6 +12,7 @@ public class ship_movement : MonoBehaviour
     private shootbar shoot_bar;
     private camera_movement camera;
 
+    public GameObject game_over_panel;
     private GameObject anchor_image;
     public GameObject kaching_sound;
     public GameObject ball;
@@ -38,7 +39,9 @@ public class ship_movement : MonoBehaviour
         anchor_image = GameObject.Find("anchor");
 		
         anchor_image.SetActive(false);
-		FindObjectinScene();
+		FindObjectInScene();
+
+        game_over_panel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -65,15 +68,23 @@ public class ship_movement : MonoBehaviour
             }
         }
     }
-	
-	private void TakeDamage(float damage){
+
+    private void GameOver()
+    {
+        Time.timeScale = 0;
+        game_over_panel.SetActive(true);
+        menu_handler.DeleteFiles(WorldLoader.activeMapFilename);
+    }
+
+    private void TakeDamage(float damage){
 		health -= damage;
         if (health > 0.0f)
             RefreshHealth();
-		else{
-			Time.timeScale = 0;
-			Destroy(camera.GetComponent<AudioListener>());
-		}
+		else
+        {
+            GameOver();
+            Destroy(camera.GetComponent<AudioListener>());
+        }
 	}
 
     private void OnCollisionEnter(Collision collision)
@@ -173,7 +184,7 @@ public class ship_movement : MonoBehaviour
         }
     }
 	
-	static void FindObjectinScene(){
+	static void FindObjectInScene(){
 		objInScene = FindObjectOfType<ship_movement>();
 	}
 

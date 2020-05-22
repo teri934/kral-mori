@@ -74,11 +74,16 @@ public class menu_handler : MonoBehaviour
     public void YesControl()
     {
         click_sound.GetComponent<AudioSource>().Play();
-        File.Delete("Saves/" + choose_world.text + ".world");
-		File.Delete("Saves/" + choose_world.text + ".state");
-        files = Directory.GetFiles("Saves","*.world");
+        DeleteFiles("Saves/" + choose_world.text);
+        files = Directory.GetFiles("Saves", "*.world");
         ControlFiles();
         delete_world_panel.SetActive(false);
+    }
+
+    public static void DeleteFiles(string name)
+    {
+        File.Delete(name + ".world");
+        File.Delete(name + ".state");
     }
 
     public void ContinueGameControl()

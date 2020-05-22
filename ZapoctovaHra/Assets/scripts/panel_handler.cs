@@ -13,6 +13,7 @@ public class panel_handler : MonoBehaviour
         Time.timeScale = 1;
         game_over_panel.SetActive(false);
         pause_panel.SetActive(false);
+        
     }
 
     // Update is called once per frame
@@ -53,9 +54,8 @@ public class panel_handler : MonoBehaviour
         }
     }
 
-    public void GameOver()
+    public void BackToMainMenuControl()
     {
-        Time.timeScale = 0;
-        game_over_panel.SetActive(true);
+        SceneManager.LoadScene("MainMenu");
     }
 }

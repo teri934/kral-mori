@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ship_movement : MonoBehaviour
 {
+	static GameObject enemy;
+	
     private Rigidbody rb;
     private float angle;
     private bool anchor = false;
@@ -15,8 +17,10 @@ public class ship_movement : MonoBehaviour
     private GameObject anchor_image;
     public GameObject kaching_sound;
     public GameObject ball;
+	
 	public static ship_movement objInScene;
-    public float ball_force = 1500f;
+	
+    public float ball_force = 6f;
 	public float speed = 10f;
     public float rot_speed = 7f;
     public float health = 1f;
@@ -28,17 +32,21 @@ public class ship_movement : MonoBehaviour
 
     Ray ray;
     RaycastHit hit;
+	
+	void Awake(){
+		FindObjectinScene();
+	}
     // Start is called before the first frame update
     void Start()
     {
+		enemy = Resources.Load("prefabs/enemy") as GameObject;
         rb = GetComponent<Rigidbody>();
         health_bar = FindObjectOfType<healthbar>();
         shoot_bar = FindObjectOfType<shootbar>();
 		camera = FindObjectOfType<camera_movement>();
         anchor_image = GameObject.Find("anchor");
-		
         anchor_image.SetActive(false);
-		FindObjectinScene();
+		SpawnEnemies(5);
     }
 
     // Update is called once per frame
@@ -66,21 +74,44 @@ public class ship_movement : MonoBehaviour
         }
     }
 	
-	private void TakeDamage(float damage){
+	private void TakeDamage(float damage, GameObject other){
 		health -= damage;
-        if (health > 0.0f)
+        if (health > 0.0f){
+			camera.Shake(0.002f);
+			rb.AddForce(3f*(transform.position-other.transform.position), ForceMode.Impulse);
             RefreshHealth();
+		}
 		else{
 			Time.timeScale = 0;
 			Destroy(camera.GetComponent<AudioListener>());
 		}
 	}
+	
+	private bool EmptySpace(Vector3 direction){
+		Ray ray = new Ray(transform.position, direction);
+		if (Physics.Raycast(ray, out RaycastHit hit, 50))
+		{
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
+	//TODO!!!
+	public void SpawnEnemies(int count){
+		for(int i = 0; i< count; i++){
+			if(EmptySpace(new Vector3(10*i,0,10*i))){
+				Instantiate(enemy, transform.position + new Vector3(10*i,0,10*i), Quaternion.identity);
+			}
+		}
+	}
+	
+	
 
     private void OnCollisionEnter(Collision collision)
     {
-		rb.AddForce(10f * - transform.forward, ForceMode.Impulse);
-		camera.Shake(0.002f);
-        TakeDamage(damage_scale);
+        TakeDamage(damage_scale,collision.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -89,10 +120,8 @@ public class ship_movement : MonoBehaviour
         {
             if (other.gameObject.GetComponent<ball_collision>().enemy_ball)
             {
-                rb.AddForce(10f * -transform.forward, ForceMode.Impulse);
-				TakeDamage(damage_scale);
+				TakeDamage(damage_scale,other.gameObject);
             }
-            camera.Shake(0.002f);
         }
     }
 	

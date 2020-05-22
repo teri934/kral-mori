@@ -35,7 +35,7 @@ public class ship_movement : MonoBehaviour
     RaycastHit hit;
 	
 	void Awake(){
-		FindObjectinScene();
+		FindObjectInScene();
 	}
     // Start is called before the first frame update
     void Start()
@@ -86,7 +86,8 @@ public class ship_movement : MonoBehaviour
         menu_handler.DeleteFiles(WorldLoader.activeMapFilename);
     }
 	
-	private void TakeDamage(float damage, GameObject other){
+	private void TakeDamage(float damage, GameObject other)
+    {
         health -= damage;
         if (health > 0.0f)
         {
@@ -99,7 +100,7 @@ public class ship_movement : MonoBehaviour
             GameOver();
             Destroy(camera.GetComponent<AudioListener>());
         }
-        } 
+    } 
 	
 	private bool EmptySpace(Vector3 direction){
 		Ray ray = new Ray(transform.position, direction);
@@ -125,7 +126,7 @@ public class ship_movement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        TakeDamage(damage_scale,collision.gameObject);
+        TakeDamage(damage_scale, collision.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -134,12 +135,13 @@ public class ship_movement : MonoBehaviour
         {
             if (other.gameObject.GetComponent<ball_collision>().enemy_ball)
             {
-				TakeDamage(damage_scale,other.gameObject);
+				TakeDamage(damage_scale, other.gameObject);
             }
         }
     }
 	
-	public void RefreshHealth(){
+	public void RefreshHealth()
+    {
 		health_bar.SetSize(health);
 	}
 
@@ -154,7 +156,7 @@ public class ship_movement : MonoBehaviour
             GameObject new_ball = Instantiate(ball, transform.position + transform.forward * 2*i, Quaternion.identity);
             new_ball.GetComponent<Rigidbody>().AddForce((transform.right + transform.up) * ball_force, ForceMode.Impulse);
         }
-        counter_coconuts -= 1;
+        counter_coconuts -= 3;
         yield return new WaitForSeconds(4);
         shoot = true;
     }
@@ -163,7 +165,7 @@ public class ship_movement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (shoot == true && counter_coconuts > 0)
+            if (shoot == true && counter_coconuts >= 3)
             {
                 gameObject.GetComponent<AudioSource>().Play();
                 StartCoroutine(Shoot());
@@ -215,6 +217,28 @@ public class ship_movement : MonoBehaviour
             }
         }
     }
+
+    void AddToHealth()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            if (counter_oranges >= 5 && health < 1)
+            {
+                counter_oranges -= 5;
+                if (health <= 0.95f)
+                {
+                    kaching_sound.GetComponent<AudioSource>().Play();
+                    health += 0.05f;
+                }
+                else if (health <= 1)
+                {
+                    kaching_sound.GetComponent<AudioSource>().Play();
+                    health += 1 - health;
+                }
+                RefreshHealth();
+            }
+        }
+    }
 	
 	static void FindObjectInScene(){
 		objInScene = FindObjectOfType<ship_movement>();
@@ -229,5 +253,6 @@ public class ship_movement : MonoBehaviour
         Anchor();
         Shooting();
         Collect();
+        AddToHealth();
     }
 }

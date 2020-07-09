@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 public class ship_movement : MonoBehaviour
 {
 	static GameObject enemy;
@@ -13,7 +15,11 @@ public class ship_movement : MonoBehaviour
     private healthbar health_bar;
     private shootbar shoot_bar;
     private camera_movement camera;
+    private int score;
 
+    public Text scoreboard;
+    public Text coco_text;
+    public Text orange_text;
     public GameObject game_over_panel;
     private GameObject anchor_image;
     public GameObject kaching_sound;
@@ -24,12 +30,35 @@ public class ship_movement : MonoBehaviour
     public float ball_force = 6f;
 	public float speed = 10f;
     public float rot_speed = 7f;
-    public float health = 1f;
-    const float damage_scale = 0.1f;
+    public int health = 10;
+    const int damage_scale = 1;
     private const float shoot_add_interval = 0.25f;
 
-    public int counter_oranges = 5;
-    public int counter_coconuts = 9;
+    private int coconuts = 9;
+    private int oranges = 5;
+
+    public int Score
+    {
+        get { return score; }
+    }
+
+    public int counter_coconuts
+    {
+        get { return coconuts; }
+        set { coconuts = value;
+            UpdateCounters();
+        }
+    }
+    public int counter_oranges
+    {
+        get { return oranges; }
+        set
+        {
+            oranges = value;
+            UpdateCounters();
+        }
+    }
+
 
     Ray ray;
     RaycastHit hit;
@@ -51,10 +80,16 @@ public class ship_movement : MonoBehaviour
 		FindObjectInScene();
 
         game_over_panel.SetActive(false);
-		SpawnEnemies(5);
+
+        UpdateCounters();
+
     }
 
     // Update is called once per frame
+    public void AddToScore(int increment) {
+        score += increment;
+        scoreboard.text = "Score: " + score;
+    }
 
     private void FixedUpdate()
     {
@@ -83,13 +118,20 @@ public class ship_movement : MonoBehaviour
     {
         Time.timeScale = 0;
         game_over_panel.SetActive(true);
+        game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "Your score was " + score;
         menu_handler.DeleteFiles(WorldLoader.activeMapFilename);
     }
+
+    private void UpdateCounters()
+    {
+        orange_text.text = "" + counter_oranges;
+        coco_text.text = "" + counter_coconuts;
+    }
 	
-	private void TakeDamage(float damage, GameObject other)
+	private void TakeDamage(int damage, GameObject other)
     {
         health -= damage;
-        if (health > 0.0f)
+        if (health > 0)
         {
             camera.Shake(0.002f);
             rb.AddForce(3f * (transform.position - other.transform.position), ForceMode.Impulse);
@@ -98,31 +140,42 @@ public class ship_movement : MonoBehaviour
         else
         {
             GameOver();
-            Destroy(camera.GetComponent<AudioListener>());
         }
     } 
 	
-	private bool EmptySpace(Vector3 direction){
-		Ray ray = new Ray(transform.position, direction);
-		if (Physics.Raycast(ray, out RaycastHit hit, 50))
-		{
-			return false;
-		}
-		else{
-			return true;
-		}
-	}
+	public void SpawnEnemy(int num){
+		List<Vector3> emptySpaces = WhereCanISpawn();
+        System.Random rand = new System.Random();
+        while(num > 0) {
+            Instantiate(enemy, transform.position + emptySpaces[rand.Next(0,emptySpaces.Count)], Quaternion.identity);
+            num--;
+        }
+
+    }
 	
-	//TODO!!!
-	public void SpawnEnemies(int count){
-		for(int i = 0; i< count; i++){
-			if(EmptySpace(new Vector3(10*i,0,10*i))){
-				Instantiate(enemy, transform.position + new Vector3(10*i,0,10*i), Quaternion.identity);
-			}
-		}
-	}
-	
-	
+    //Ensures that the enemies are not spawned underneath the islands.
+	private List<Vector3> WhereCanISpawn(){
+        List<Vector3> result = new List<Vector3>();
+        int[] coords = WorldLoader.CoordsToMatrix(transform.position);
+        string log = "";
+        for (int y = 2; y >= -2; y--)
+        {
+            for (int x = -2; x <= 2; x++)
+            {
+                log += WorldLoader.ReadFromMap(coords[1] + y, coords[0] + x);
+                if (y == 0 && x == 0)
+                {
+                    continue;
+                }
+                if (WorldLoader.ReadFromMap(coords[1] + y, coords[0] + x) == 0) {
+                    result.Add(new Vector3(x*10, -6, y*10));
+                }
+            }
+            log += '\n';
+        }
+        Debug.Log(log);
+        return result;
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -142,7 +195,7 @@ public class ship_movement : MonoBehaviour
 	
 	public void RefreshHealth()
     {
-		health_bar.SetSize(health);
+		health_bar.SetSize((float)(health/10.0f));
 	}
 
     IEnumerator Shoot()
@@ -205,13 +258,15 @@ public class ship_movement : MonoBehaviour
                 if (hit.collider.gameObject.tag == "coconut")
                 {
                     kaching_sound.GetComponent<AudioSource>().Play();
-                    counter_coconuts += 1;
+                    counter_coconuts++;
+                    AddToScore(5);
                     Destroy(hit.collider.gameObject);
                 }
                 if (hit.collider.gameObject.tag == "orange")
                 {
                     kaching_sound.GetComponent<AudioSource>().Play();
-                    counter_oranges += 1;
+                    counter_oranges++;
+                    AddToScore(5);
                     Destroy(hit.collider.gameObject);
                 }
             }
@@ -222,19 +277,10 @@ public class ship_movement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.H))
         {
-            if (counter_oranges >= 5 && health < 1)
+            if (counter_oranges >= 5 && health < 10)
             {
                 counter_oranges -= 5;
-                if (health <= 0.95f)
-                {
-                    kaching_sound.GetComponent<AudioSource>().Play();
-                    health += 0.05f;
-                }
-                else if (health <= 1)
-                {
-                    kaching_sound.GetComponent<AudioSource>().Play();
-                    health += 1 - health;
-                }
+				health++;
                 RefreshHealth();
             }
         }
@@ -249,6 +295,11 @@ public class ship_movement : MonoBehaviour
 		if(Time.timeScale == 0){
 			return;
 		}
+		
+		if(Input.GetKeyDown(KeyCode.L)){
+            SpawnEnemy(1);
+		}
+		
         angle = Vector3.Angle(transform.forward, wind_generator.position);
         Anchor();
         Shooting();

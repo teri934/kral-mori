@@ -90,7 +90,6 @@ GameObject:
   - component: {fileID: 5853332939454159157}
   - component: {fileID: 1459592362987860478}
   - component: {fileID: 1459592362987860472}
-  - component: {fileID: 1459592362987860476}
   - component: {fileID: 1459592362987860473}
   m_Layer: 0
   m_Name: ship_01
@@ -143,25 +142,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 4, z: 7}
   m_Center: {x: 0, y: 1, z: 0}
---- !u!95 &1459592362987860476
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7449075362380966694}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &1459592362987860473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +154,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e635a34b53319a4d9e1d3a1cfb63e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  game_over_panel: {fileID: 0}
+  kaching_sound: {fileID: 0}
   ball: {fileID: 8586477405775983351, guid: 73b864f4a334f604f824c62dba56fc14, type: 3}
   ball_force: 6
   speed: 6
   rot_speed: 3
+  health: 1000
+  counter_oranges: 5
+  counter_coconuts: 9

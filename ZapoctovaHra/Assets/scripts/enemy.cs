@@ -16,6 +16,7 @@ public class enemy : MonoBehaviour
 	
 	float lastShootTime;
 	const int shootDelay = 4;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,7 +30,7 @@ public class enemy : MonoBehaviour
 	}
 	
 	bool InSight(){
-		Ray ray = new Ray(transform.position, transform.right);
+		Ray ray = new Ray(transform.position, transform.right+transform.forward);
 		if (Physics.Raycast(ray, out RaycastHit hit, 50))
 		{
 			return true;
@@ -40,13 +41,27 @@ public class enemy : MonoBehaviour
 	}
 	
 	void TakeDamage(GameObject other){
-		if(health>1){
+		if(health>0){
 			rb.AddForce(3f*(transform.position-other.gameObject.transform.position), ForceMode.Impulse);
 			health--;
+			Debug.Log(health);
 		}
-		else{
+	}
+	
+	void Sink(){
+		transform.Translate(-2*Vector3.up*Time.deltaTime);
+		Debug.Log("Sinking");
+		if(transform.position.y<-3){
+			ship_movement.objInScene.SpawnEnemy(1);
+			ship_movement.objInScene.AddToScore(100);
 			Destroy(gameObject);
 		}
+	}
+
+	void Emerge()
+	{
+		transform.Translate(Vector3.up * Time.deltaTime);
+		Debug.Log("Emerging");
 	}
 	
 	private void OnCollisionEnter(Collision collision)
@@ -80,8 +95,18 @@ public class enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.y < 3)
+        {
+			Emerge();
+        }
+
+		if(health<1){
+			Sink();
+			return;
+		}
 		playerVect = vectorToPlayer();
 		windAngle = Vector3.SignedAngle(transform.forward, wind_generator.position, Vector3.up);
+		
 		if(Vector3.Angle(transform.forward, playerVect)<90){
 			rb.AddTorque(0.02f*Vector3.SignedAngle(transform.forward, playerVect-player.transform.right*2,Vector3.up)*Vector3.up);
 		}

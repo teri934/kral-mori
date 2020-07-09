@@ -14,9 +14,10 @@ public class generate_islands : MonoBehaviour
 	void Start()
     {
 		menu_handler = FindObjectOfType<menu_handler>();
-		WorldLoader.LoadMap(menu_handler.world_name,32);
+		WorldLoader.LoadMap(menu_handler.world_name,menu_handler.newworld_size);
 		trig = FindObjectOfType<world_trigger>();
 		trig.SpawnPlace(WorldLoader.spawnX,WorldLoader.spawnY);
+		ship_movement.objInScene.SpawnEnemy(2);
 		Destroy(menu_handler.gameObject);
     }
 
@@ -47,6 +48,17 @@ public static class WorldLoader
 		return (x%m + m)%m;
 	}
 	
+	public static int[] CoordsToMatrix(Vector3 coords){
+		int[] matrixCoords = new int[2];
+		matrixCoords[0] = (int)(mod((int)coords.x,world_size*10)/10);
+		matrixCoords[1] = (int)(mod((int)coords.z,world_size*10)/10);
+		return matrixCoords;
+	}
+	
+	public static byte ReadFromMap(int y,int x){
+		return world_map[mod(y,world_size)][mod(x,world_size)];
+	}
+	
 	private static void SaveState(string filename){
 		StreamWriter stateFile = new StreamWriter(filename+".state");
 		ship_movement player = ship_movement.objInScene;
@@ -54,8 +66,9 @@ public static class WorldLoader
 		stateFile.WriteLine(mod((int)player.transform.position.z,world_size*10));
 		stateFile.WriteLine(player.counter_oranges);
 		stateFile.WriteLine(player.counter_coconuts);
-		stateFile.WriteLine((int)(player.health*255));
-		
+		stateFile.WriteLine(player.health);
+		stateFile.WriteLine(player.Score);
+
 		stateFile.Close();
 	}		
 	
@@ -68,12 +81,21 @@ public static class WorldLoader
 		
 		ship_movement.objInScene.counter_oranges = Convert.ToInt32(stateFile.ReadLine());
 		ship_movement.objInScene.counter_coconuts = Convert.ToInt32(stateFile.ReadLine());
-		ship_movement.objInScene.health = (Convert.ToSingle(stateFile.ReadLine())/255);
+		ship_movement.objInScene.health = Convert.ToInt32(stateFile.ReadLine());
 		ship_movement.objInScene.RefreshHealth();
-		
+		ship_movement.objInScene.AddToScore(Convert.ToInt32(stateFile.ReadLine()));
+
 		stateFile.Close();
 		
 		
+	}
+	
+	private static void CreateMapMatrix(int size){
+		world_map = new byte[size][];			
+		for(int i = 0; i < size; i++)
+		{
+			world_map[i] = new byte[size];
+		}
 	}
 	
 	private static void WriteMap(string filePath)
@@ -111,6 +133,8 @@ public static class WorldLoader
 		}
 		world_size = BitConverter.ToInt32(header,0);
 		byte size_as_power_of_2 = (byte)System.Math.Log(world_size, 2);
+		CreateMapMatrix(world_size);
+		
 		Debug.Log(size_as_power_of_2);
 		
 		//az potom data o svete
@@ -127,8 +151,8 @@ public static class WorldLoader
 	
 	private static void PerlinGenerate()
 	{
-		rand = new System.Random(); //mohl by chtit seed
-		int perlin_offset = 0;  //rand.Next(0, int.MaxValue);
+		rand = new System.Random((int)(Time.time*1000)); //mohl by chtit seed
+		int perlin_offset = rand.Next(0, 1024);
 		for(int y = 0; y < world_size; y++)
 		{
 			for(int x = 0; x < world_size; x++)
@@ -137,6 +161,11 @@ public static class WorldLoader
 				world_map[y][x] *= RandomPOIDistribution();
 			}
 		}
+		//aby se hrac nezrodil pod ostrovem
+		for(int i = 0; i<9; i++){
+			world_map[i/3][i%3] = 0;
+		}
+		
 	}
 
 	private static byte RandomPOIDistribution()
@@ -152,11 +181,6 @@ public static class WorldLoader
 		filePath = "Saves/" + filePath;
 		activeMapFilename = filePath;
 		world_size = size;
-		world_map = new byte[world_size][];			
-		for(int i = 0; i < world_size; i++)
-		{
-			world_map[i] = new byte[world_size];
-		}
 		
 		if (File.Exists(filePath+".world")) 
 		{
@@ -164,16 +188,15 @@ public static class WorldLoader
 			ReadMap(filePath);
 			LoadState(filePath);
 		}
-		
 		else
 		{
+			CreateMapMatrix(world_size);
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
 			WriteMap(filePath);
 			//stav hrace se ulozi az pri prvnim zavreni hry.
 			Debug.Log("Soubor vytvoren.");			
 		}
-		
 	}
 }
 
@@ -231,8 +254,6 @@ public class Chunk : ScriptableObject
 		fortress
 	};
 	
-	
-	//inits matrix of given size
 	public Chunk(int pos_x, int pos_y)
 	{
 		this.pos_x = pos_x;
@@ -245,7 +266,7 @@ public class Chunk : ScriptableObject
 		{
 			for(int x = 0; x < size; x++)
 			{
-				if(ReturnPositionWorldMap(y, x) > 0)
+				if(WorldLoader.ReadFromMap(y+pos_y/10, x+pos_x/10) > 0)
 				{
 					type_of_island = TypeOfIsland(y, x);
 					parameters = models[type_of_island];
@@ -253,21 +274,16 @@ public class Chunk : ScriptableObject
 					existingIslands.Add(new_island);
 					new_island.GetComponent<Transform>().rotation = Quaternion.Euler(0f, (float)parameters.Item2, 0f);
 				}
-				if(ReturnPositionWorldMap(y, x) > 1)
+				if(WorldLoader.ReadFromMap(y + pos_y/10, x + pos_x/10) > 1)
 				{
-					int POIid = ReturnPositionWorldMap(y, x) - 2;
+					int POIid = WorldLoader.ReadFromMap(y + pos_y/10, x + pos_x/10) - 2;
 					new_POI = Instantiate(POIs_array[POIid],new Vector3(pos_x + x * 10, 10, pos_y + y * 10), Quaternion.identity);
 					existingIslands.Add(new_POI);
 				}
 			}
 		}
 	}
-	
-	private byte ReturnPositionWorldMap(int y, int x)
-	{
-		byte value = WorldLoader.world_map[((y + (pos_y / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size][((x + (pos_x / 10)) % WorldLoader.world_size + WorldLoader.world_size) % WorldLoader.world_size];
-		return value;
-	}
+
 	public void RemoveIslands()
 	{
 		foreach (GameObject island in existingIslands){
@@ -283,7 +299,7 @@ public class Chunk : ScriptableObject
 		for(int i = 0; i < size; i++)
 		{
 			for(int j = 0; j < size; j++){
-				matice = matice + ReturnPositionWorldMap(i, j) + " ";
+				matice = matice + WorldLoader.ReadFromMap(i, j) + " ";
 			}
 			matice += System.Environment.NewLine;
 		}
@@ -302,7 +318,7 @@ public class Chunk : ScriptableObject
 				{
 					if ((x + dx <= size) && (y + dy <= size) && (x + dx >= -1) && (y + dy >= -1))
 					{
-						if (ReturnPositionWorldMap(x + dx, y + dy) > 0)
+						if (WorldLoader.ReadFromMap(x + dx + pos_y/10, y + dy + pos_x/10) > 0)
 						{
 							value_of_island += value_array[pointer];
 						}

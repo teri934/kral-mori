@@ -15,19 +15,30 @@ public class menu_handler : MonoBehaviour
     public GameObject delete_world_panel;
     public InputField input_field;
     public Text choose_world;
+	
     public string world_name;
+	public int newworld_size;
+	private string[] files;
+	
     public Text invalid;
     public Text generate_name;
+	public Text size_slider_text;
     int index;
-    string[] files = Directory.GetFiles("Saves","*.world");
     const string no_worlds = "No worlds created yet";
+	
     void Start()
     {
         main_menu_panel.SetActive(true);
         continue_game_panel.SetActive(false);
         new_game_panel.SetActive(false);
         delete_world_panel.SetActive(false);
-
+		if(Directory.Exists("Saves")){
+			files = Directory.GetFiles("Saves","*.world");
+		}
+		else{
+			Directory.CreateDirectory("Saves");
+			files = new string[0];
+		}
         ControlFiles();
     }
     void Awake()
@@ -93,6 +104,10 @@ public class menu_handler : MonoBehaviour
         continue_game_panel.SetActive(true);
     }
 
+    public void Exit() {
+        Application.Quit(0);
+    }
+
     public void ArrowControl()
     {
         click_sound.GetComponent<AudioSource>().Play();
@@ -119,6 +134,11 @@ public class menu_handler : MonoBehaviour
         main_menu_panel.SetActive(false);
         new_game_panel.SetActive(true);
     }
+	
+	public void NewWorldSlider(System.Single size){
+		size_slider_text.text = "World size:    " + size + "     (approx." + (int)(Mathf.Pow((2<<(int)size-1),2)/1000) + "kB.)";
+		newworld_size = 2<<((int)size-1);
+	}
 
     public void GenerateWorld()
     {

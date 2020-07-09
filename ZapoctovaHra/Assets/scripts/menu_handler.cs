@@ -136,8 +136,8 @@ public class menu_handler : MonoBehaviour
     }
 	
 	public void NewWorldSlider(System.Single size){
-		size_slider_text.text = "World size:    " + size + "     (approx." + (int)(Mathf.Pow((2<<(int)size-1),2)/1000) + "kB.)";
-		newworld_size = 2<<((int)size-1);
+		size_slider_text.text = "World size:    " + size + "     (approx." + (int)(Mathf.Pow((2 << (int)size - 1), 2) / 1000) + "kB.)";
+		newworld_size = 2 << ((int) size - 1);
 	}
 
     public void GenerateWorld()

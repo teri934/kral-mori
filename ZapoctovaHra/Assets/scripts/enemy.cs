@@ -29,29 +29,34 @@ public class enemy : MonoBehaviour
 		return (player.transform.position - transform.position);
 	}
 	
-	bool InSight(){
+	bool InSight()
+	{
 		Ray ray = new Ray(transform.position, transform.right+transform.forward);
 		if (Physics.Raycast(ray, out RaycastHit hit, 50))
 		{
 			return true;
 		}
-		else{
+		else
+		{
 			return false;
 		}
 	}
 	
-	void TakeDamage(GameObject other){
-		if(health>0){
-			rb.AddForce(3f*(transform.position-other.gameObject.transform.position), ForceMode.Impulse);
+	void TakeDamage(GameObject other)
+	{
+		if(health > 0)
+		{
+			rb.AddForce(3f * (transform.position - other.gameObject.transform.position), ForceMode.Impulse);
 			health--;
 			Debug.Log(health);
 		}
 	}
 	
-	void Sink(){
-		transform.Translate(-2*Vector3.up*Time.deltaTime);
+	void Sink()
+	{
+		transform.Translate(-2 * Vector3.up * Time.deltaTime);
 		Debug.Log("Sinking");
-		if(transform.position.y<-3){
+		if(transform.position.y < -3){
 			ship_movement.objInScene.SpawnEnemy(1);
 			ship_movement.objInScene.AddToScore(100);
 			Destroy(gameObject);
@@ -83,7 +88,7 @@ public class enemy : MonoBehaviour
 	void Shoot(){
         for (int i = -1; i < 2; i++)
         {
-            GameObject new_ball = Instantiate(ball, transform.position + transform.forward * 2*i, Quaternion.identity);
+            GameObject new_ball = Instantiate(ball, transform.position + transform.forward * 2 * i, Quaternion.identity);
 			new_ball.GetComponent<ball_collision>().enemy_ball = true;
             new_ball.GetComponent<Rigidbody>().AddForce((transform.right + transform.up) * ball_force, ForceMode.Impulse);
         }
@@ -100,24 +105,30 @@ public class enemy : MonoBehaviour
 			Emerge();
         }
 
-		if(health<1){
+		if (health < 1)
+		{
 			Sink();
 			return;
 		}
 		playerVect = vectorToPlayer();
 		windAngle = Vector3.SignedAngle(transform.forward, wind_generator.position, Vector3.up);
 		
-		if(Vector3.Angle(transform.forward, playerVect)<90){
-			rb.AddTorque(0.02f*Vector3.SignedAngle(transform.forward, playerVect-player.transform.right*2,Vector3.up)*Vector3.up);
+		if (Vector3.Angle (transform.forward, playerVect) < 90)
+		{
+			rb.AddTorque(0.02f * Vector3.SignedAngle(transform.forward, playerVect - player.transform.right * 2, Vector3.up) * Vector3.up);
 		}
-		else{
-			rb.AddTorque(0.02f*Vector3.SignedAngle(transform.forward, playerVect+player.transform.right*2,Vector3.up)*Vector3.up);
+		else
+		{
+			rb.AddTorque(0.02f * Vector3.SignedAngle(transform.forward, playerVect + player.transform.right * 2, Vector3.up) * Vector3.up);
 		}
-		if(playerVect.sqrMagnitude < 100){
-			if(InSight() && Time.time - lastShootTime > shootDelay){
+
+		if (playerVect.sqrMagnitude < 100)
+		{
+			if (InSight() && Time.time - lastShootTime > shootDelay)
+			{
 				Shoot();
 			}
 		}
-		rb.AddForce(speed*transform.forward*Mathf.Cos(0.5f*windAngle*(Mathf.PI/180)));
+		rb.AddForce(speed * transform.forward * Mathf.Cos(0.5f * windAngle * (Mathf.PI / 180)));
     }
 }

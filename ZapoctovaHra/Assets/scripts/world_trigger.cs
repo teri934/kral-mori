@@ -19,9 +19,10 @@ public class world_trigger : MonoBehaviour
     }
 	
 	public void SpawnPlace(int x, int y){
+		
 		int pointer = 0;
 		
-		ship_movement player = FindObjectOfType<ship_movement>();
+		ship_movement player = ship_movement.objInScene;
 		camera_movement camera = FindObjectOfType<camera_movement>();
 		int chunk_x = 160*(x/160);
 		int chunk_y = 160*(y/160);

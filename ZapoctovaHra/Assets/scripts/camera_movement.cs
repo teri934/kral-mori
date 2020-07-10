@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class camera_movement : MonoBehaviour
 {
-    public GameObject ship;
+    ship_movement ship;
 	const int max_dist_square = 13000;
 	const float def_wave_amp = 0.0001f;
 	const float def_wave_freq = 4;
@@ -17,12 +17,13 @@ public class camera_movement : MonoBehaviour
 
     void Start()
     {
+		ship = ship_movement.objInScene;
         last = ship.transform.position;
     }
 
 	public void JumpToShip()
     {
-		transform.position = ship.transform.position + new Vector3(0, 50, -72);
+		transform.position = ship_movement.objInScene.transform.position + new Vector3(0, 50, -72);
 	}
 	
     void Update()

@@ -31,7 +31,7 @@ public class enemy : MonoBehaviour
 	
 	bool InSight()
 	{
-		Ray ray = new Ray(transform.position, transform.right+transform.forward);
+		Ray ray = new Ray(transform.position, transform.right);
 		if (Physics.Raycast(ray, out RaycastHit hit, 50))
 		{
 			return true;

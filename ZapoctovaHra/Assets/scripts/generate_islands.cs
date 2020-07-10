@@ -100,24 +100,29 @@ public static class WorldLoader
 	
 	private static void WriteMap(string filePath)
 	{
-		byte[] serializedMap = new byte[world_size * world_size + header_size]; //16 je velikost hlavicky souboru s velikosti mapy a pozici hrace
-		
-		//tvorba hlavicky
+
 		byte[] worldSizeinByteArray = BitConverter.GetBytes(world_size);
 		
-		for(int i = 0; i < 4; i++)
-		{
-			serializedMap[i] = worldSizeinByteArray[i];
-		}
-		
-		for(int i = 0; i < world_size; i++)
-		{
-			for(int j = 0; j < world_size; j++)
+		using(FileStream
+            fileStream = new FileStream(filePath+".world", FileMode.Create))
+        {
+			for(int i = 0; i < 4; i++)
 			{
-				serializedMap[header_size + i * world_size + j] = world_map[i][j];
+				fileStream.WriteByte(worldSizeinByteArray[i]);
+			}
+			
+			for(int i = 0; i < header_size - 4; i++){
+				fileStream.WriteByte(0x00);
+			}
+			
+			for(int i = 0; i < world_size; i++)
+			{
+				for(int j = 0; j < world_size; j++)
+				{
+					fileStream.WriteByte(world_map[i][j]);
+				}
 			}
 		}
-		File.WriteAllBytes(filePath + ".world", serializedMap);
 	}
 		
 	private static void ReadMap(string filePath)
@@ -133,6 +138,7 @@ public static class WorldLoader
 		}
 		world_size = BitConverter.ToInt32(header,0);
 		byte size_as_power_of_2 = (byte)System.Math.Log(world_size, 2);
+		
 		CreateMapMatrix(world_size);
 		
 		Debug.Log(size_as_power_of_2);
@@ -151,7 +157,7 @@ public static class WorldLoader
 	
 	private static void PerlinGenerate()
 	{
-		rand = new System.Random((int)(Time.time*1000)); //mohl by chtit seed
+		rand = new System.Random((int)(Time.time*1000)); 
 		int perlin_offset = rand.Next(0, 1024);
 		for(int y = 0; y < world_size; y++)
 		{
@@ -165,7 +171,6 @@ public static class WorldLoader
 		for(int i = 0; i<9; i++){
 			world_map[i/3][i%3] = 0;
 		}
-		
 	}
 
 	private static byte RandomPOIDistribution()
@@ -194,7 +199,7 @@ public static class WorldLoader
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
 			WriteMap(filePath);
-			//stav hrace se ulozi az pri prvnim zavreni hry.
+			//stav hrace se ulozi az po prvnim zavreni hry.
 			Debug.Log("Soubor vytvoren.");			
 		}
 	}

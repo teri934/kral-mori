@@ -1,0 +1,80 @@
+Třída generate_islands:
+	připnutá k objektu XXX ve scéně, volá funkce třídy WorldLoader, world_trigger a ship_movement.
+	při startu hry (přepnutí z hlavního menu) zajišťuje inicializaci scény.
+	
+Třída WorldLoader:
+	- stará se o načítání herního světa ze souborů a o manipulaci s mapou světa.
+	statické proměnné:
+		- byte[][] world_map - odpovídá aktivní "mapě ostrovů" (matici typů ostrovů)
+			- 0x00 = moře
+			- 0x01 = prázdný ostrov
+			- 0x02 = ostrov s pomerančovníkem
+			- 0x03 = ostrov s palmou
+			- 0x04 = ostrov s pevností
+		- int world_size - odpovídá jednomu rozměru world_map
+		- string activeMapFilename - jméno aktuálního souboru s mapou (bez přípony)
+		- int spawnX, int spawnY - počáteční/uložená pozice hráče (pokud se otevírá již hraná mapa, přečte se z .state souboru)
+		
+	statické metody:
+		void SaveState()
+			- volá funkci SaveState(string filename) s jménem aktivní mapy
+		void SaveState(string filename)
+			- zapisuje do souboru filename.state aktivní stav hry (pozici hráče ve světě, počet surovin, zdraví, skóre)
+			- soubor .state je textový soubor, informace jsou odděleně na jednotlivých řádcích
+		int mod(int x, int m)
+			- provádí operaci modulo (i se zápornými čísly)
+		int[2] CoordsToMatrix(Vector3 coords)
+			- z pozice objektu ve scéně (coords) vypočítá index "buňky" ve world_map, které tato pozice odpovídá
+		byte ReadFromMap(int y,int x)
+			- vrátí "typ" ostrovu, který leží na daném indexu (modulo world_size) ve world_map
+		void LoadState(string filename)
+			- přečte .state soubor se zadaným jménem a nastaví podle něj proměnné objektů v aktuální scéně
+		void CreateMapMatrix(int size)
+			- inicializuje pole world_map podle zadané velikosti
+		void WriteMap(string filePath)
+			- uloží aktuální mapu (world_map) do (binárního) souboru filePath.world.
+			- world_map se čte po řádcích, v řadě se ukládá do souboru. Prvních 16 bytů je hlavička souboru, její první 4 byty jsou velikost mapy (world_size)
+		void ReadMap(string filePath)
+			- načte soubor filePath.world do aktuální mapy (world_map)
+			- nejdříve přečte hlavičku, podle ní pak inicializuje world_map dané velikosti a naplní jej daty ze souboru
+		void PerlinGenerate()
+			- naplní mapu (world_map) "ostrovy" s pomocí Perlinova šumu (pokaždé s náhodným offsetem, aby bylo rozložení ostrovů různé v různých mapách)
+			- s pomocí funkce RandomPOIDistribution() pak na nenulové bloky (ostrovy) přidá "points of interest" - pevnosti, stromy atd.
+		byte RandomPOIDistribution()
+			- s neuniformním rozdělením vygeneruje číslo od 1-4 (odpovídá typům ostrovů)
+		void LoadMap(string filePath, int size)
+			- načte zadanou mapu ze souboru filePath.world, popřípadě tento soubor vytvoří, pokud mapa neexistuje (zde využije parametr size).
+
+Třída Chunk:
+	- spravuje bloky herního světa ve scéně (1 chunk = 16x16 ostrovů), manipuluje s ostrovy ve scéně
+	proměnné:
+		- int pos_x, pos_y - pozice Chunku ve scéně
+		- List<GameObject> existingIslands - seznam podřízených ostrovů (objektů ve scéně)
+		
+	vedle toho třída Chunk obsahuje několik statických proměnných s informacemi o typech ostrovů, jejich možných rotacích + objektech zájmu (stromy + pevnosti).
+	
+	metody:
+		Chunk(int pos_x, int pos_y) - konstruktor,
+			přiřazuje do proměnných informace o pozici Chunku ve scéně
+		void InstinScene()
+			- Chunk čte "svůj" (podle své pozice ve scéně) 16x16 výsek mapy (WorldLoader.world_map) a podle přečtených dat vkládá do scény dané ostrovy (+ případné objekty zájmu).
+			- zároveň nové objekty ve scéně přidává do seznamu existingIslands (i objekty zájmu!)
+		void RemoveIslands()
+			- Chunk projde seznam existingIslands a na každý objekt v něm zavolá funkci Destroy() - vymaže objekt ze scény.
+		void printChunk()
+			- vytiskne příslušnou část mapy (Chunk) do Debug.Log()
+		int TypeOfIsland(int x, int y)
+			- zjistí TVAR (ne typ) ostrovu na dané pozici v Chunku (tzn. kolik ostrovů s ním sousedí a kde jsou => číslo 0-15 odpovídající tvaru a rotaci ostrovu (pole Chunk.models[]) tak, aby se na své sousedy "napojil").
+			
+Třída world_trigger:
+	- připnutá na objektu world_trig ve scéně
+	- spravuje načítání mapy (Chunků) podle pozice hráče (vždy je načteno 9 chunků kolem hráče, při pohybu libovolným směrem se Chunky případně od/donačítají).
+	proměnné:
+		- Chunk[] activeChunks - pole 9 aktivních Chunků
+		- int arrayStart - index "horního levého" Chunku v poli activeChunks, aby nebylo potřeba při každé změně přesouvat všechny prvky v poli
+	metody:
+		void SpawnPlace(int x, int y)
+			- načte chunky kolem hráče (SpawnPlace se volá z generate_islands.Start(), tedy po už načtení stavu/vytvoření světa), přemístí hráče a kameru na danou pozici
+		void OnTriggerExit(Collider collider)
+			- když objekt world_trig (ve scéně) zaznamená "kolizi" s objektem hráče (tedy když se hráč dostatečně vzdálí od středu prostředního aktivního Chunku), zjistí, kterým směrem se hráč pohybuje; tímto směrem vygeneruje nové Chunky (na Chunky na protější straně zavolá jejich metodu RemoveIslands()).
+			

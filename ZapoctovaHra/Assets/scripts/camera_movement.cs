@@ -20,8 +20,9 @@ public class camera_movement : MonoBehaviour
         last = ship.transform.position;
     }
 
-	public void JumpToShip(){
-		transform.position = ship.transform.position + new Vector3(0,50,-72);
+	public void JumpToShip()
+    {
+		transform.position = ship.transform.position + new Vector3(0, 50, -72);
 	}
 	
     void Update()
@@ -29,7 +30,7 @@ public class camera_movement : MonoBehaviour
 		ship_position = ship.transform.position;
 		//ship tracking
         transform.Translate(ship_position - last, Space.World);
-		transform.Translate(dy*(ship_position-transform.position));
+		transform.Translate(dy * (ship_position - transform.position));
         last = ship_position;
 		
         if ((ship.transform.position - transform.position).sqrMagnitude < max_dist_square)
@@ -49,7 +50,7 @@ public class camera_movement : MonoBehaviour
                 transform.Translate(Input.GetAxis("Mouse ScrollWheel") * (ship.transform.position - transform.position), Space.World);
             }
         }
-		dy = wave_amp*Mathf.Sin(wave_freq*Time.time*Time.timeScale);
+		dy = wave_amp * Mathf.Sin(wave_freq * Time.time * Time.timeScale);
     }
 	
 	IEnumerator shakeTimer(float amplitude)

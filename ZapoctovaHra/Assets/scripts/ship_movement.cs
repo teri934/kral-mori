@@ -46,17 +46,13 @@ public class ship_movement : MonoBehaviour
     {
         get { return coconuts; }
         set { coconuts = value;
-            UpdateCounters();
-        }
+            UpdateCounters(); }
     }
     public int counter_oranges
     {
         get { return oranges; }
-        set
-        {
-            oranges = value;
-            UpdateCounters();
-        }
+        set { oranges = value;
+            UpdateCounters(); }
     }
 
 
@@ -86,7 +82,8 @@ public class ship_movement : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void AddToScore(int increment) {
+    public void AddToScore(int increment) 
+    {
         score += increment;
         scoreboard.text = "Score: " + score;
     }
@@ -96,11 +93,6 @@ public class ship_movement : MonoBehaviour
 
         if (anchor == false)
         {
-            if (Input.GetKey(KeyCode.F))    //na skusanie, ked sa nam nechce cakat na vietor 
-            {
-                rb.AddForce(speed * 2 * transform.forward);
-            }
-
             rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
 
             if (Input.GetKey(KeyCode.LeftArrow))
@@ -143,18 +135,21 @@ public class ship_movement : MonoBehaviour
         }
     } 
 	
-	public void SpawnEnemy(int num){
+	public void SpawnEnemy(int num)
+    {
 		List<Vector3> emptySpaces = WhereCanISpawn();
         System.Random rand = new System.Random();
-        while(num > 0) {
-            Instantiate(enemy, transform.position + emptySpaces[rand.Next(0,emptySpaces.Count)], Quaternion.identity);
+        while (num > 0) 
+        {
+            Instantiate (enemy, transform.position + emptySpaces[rand.Next(0, emptySpaces.Count)], Quaternion.identity);
             num--;
         }
 
     }
 	
     //Ensures that the enemies are not spawned underneath the islands.
-	private List<Vector3> WhereCanISpawn(){
+	private List<Vector3> WhereCanISpawn()
+    {
         List<Vector3> result = new List<Vector3>();
         int[] coords = WorldLoader.CoordsToMatrix(transform.position);
         string log = "";
@@ -162,13 +157,14 @@ public class ship_movement : MonoBehaviour
         {
             for (int x = -2; x <= 2; x++)
             {
-                log += WorldLoader.ReadFromMap(coords[1] + y, coords[0] + x);
+                log += WorldLoader.ReadFromMap (coords[1] + y, coords[0] + x);
                 if (y == 0 && x == 0)
                 {
                     continue;
                 }
-                if (WorldLoader.ReadFromMap(coords[1] + y, coords[0] + x) == 0) {
-                    result.Add(new Vector3(x*10, -6, y*10));
+                if (WorldLoader.ReadFromMap (coords[1] + y, coords[0] + x) == 0) 
+                {
+                    result.Add (new Vector3 (x * 10, -6, y * 10));
                 }
             }
             log += '\n';
@@ -195,7 +191,7 @@ public class ship_movement : MonoBehaviour
 	
 	public void RefreshHealth()
     {
-		health_bar.SetSize((float)(health/10.0f));
+		health_bar.SetSize((float)(health / 10.0f));
 	}
 
     IEnumerator Shoot()
@@ -286,17 +282,20 @@ public class ship_movement : MonoBehaviour
         }
     }
 	
-	static void FindObjectInScene(){
+	static void FindObjectInScene()
+    {
 		objInScene = FindObjectOfType<ship_movement>();
 	}
 
     void Update()
     {
-		if(Time.timeScale == 0){
+		if (Time.timeScale == 0)
+        {
 			return;
 		}
 		
-		if(Input.GetKeyDown(KeyCode.L)){
+		if (Input.GetKeyDown(KeyCode.L))
+        {
             SpawnEnemy(1);
 		}
 		

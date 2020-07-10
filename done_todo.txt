@@ -3,14 +3,15 @@ Done:
 - generate_islands
 - world_trigger
 - wind_generator
+- shootbar
+- healthbar
+- ball_collision
 
 ToDo:
-- ball_collision
 - enemy
 - enemy_fortress
 - follow_player
-- healthbar
 - menu_handler
 - panel_handler
 - ship_movement
-- shootbar
+- GAME MANUAL

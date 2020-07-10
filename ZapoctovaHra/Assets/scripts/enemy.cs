@@ -44,8 +44,9 @@ public class enemy : MonoBehaviour
 	
 	void TakeDamage(GameObject other)
 	{
-		if(health > 0)
+		if (health > 0)
 		{
+			gameObject.GetComponent<ParticleSystem>().Play();
 			rb.AddForce(3f * (transform.position - other.gameObject.transform.position), ForceMode.Impulse);
 			health--;
 			Debug.Log(health);
@@ -56,7 +57,8 @@ public class enemy : MonoBehaviour
 	{
 		transform.Translate(-2 * Vector3.up * Time.deltaTime);
 		Debug.Log("Sinking");
-		if(transform.position.y < -3){
+		if (transform.position.y < -3)
+		{
 			ship_movement.objInScene.SpawnEnemy(1);
 			ship_movement.objInScene.AddToScore(100);
 			Destroy(gameObject);

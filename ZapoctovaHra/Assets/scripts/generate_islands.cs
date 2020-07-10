@@ -271,7 +271,7 @@ public class Chunk : ScriptableObject
 		{
 			for(int x = 0; x < size; x++)
 			{
-				if(WorldLoader.ReadFromMap(y+pos_y/10, x+pos_x/10) > 0)
+				if(WorldLoader.ReadFromMap(y + pos_y/10, x + pos_x / 10) > 0)
 				{
 					type_of_island = TypeOfIsland(y, x);
 					parameters = models[type_of_island];
@@ -279,9 +279,9 @@ public class Chunk : ScriptableObject
 					existingIslands.Add(new_island);
 					new_island.GetComponent<Transform>().rotation = Quaternion.Euler(0f, (float)parameters.Item2, 0f);
 				}
-				if(WorldLoader.ReadFromMap(y + pos_y/10, x + pos_x/10) > 1)
+				if(WorldLoader.ReadFromMap(y + pos_y / 10, x + pos_x / 10) > 1)
 				{
-					int POIid = WorldLoader.ReadFromMap(y + pos_y/10, x + pos_x/10) - 2;
+					int POIid = WorldLoader.ReadFromMap(y + pos_y / 10, x + pos_x / 10) - 2;
 					new_POI = Instantiate(POIs_array[POIid],new Vector3(pos_x + x * 10, 10, pos_y + y * 10), Quaternion.identity);
 					existingIslands.Add(new_POI);
 				}
@@ -291,7 +291,8 @@ public class Chunk : ScriptableObject
 
 	public void RemoveIslands()
 	{
-		foreach (GameObject island in existingIslands){
+		foreach (GameObject island in existingIslands)
+		{
 			Destroy(island);
 		}
 	
@@ -323,7 +324,7 @@ public class Chunk : ScriptableObject
 				{
 					if ((x + dx <= size) && (y + dy <= size) && (x + dx >= -1) && (y + dy >= -1))
 					{
-						if (WorldLoader.ReadFromMap(x + dx + pos_y/10, y + dy + pos_x/10) > 0)
+						if (WorldLoader.ReadFromMap(x + dx + pos_y / 10, y + dy + pos_x / 10) > 0)
 						{
 							value_of_island += value_array[pointer];
 						}

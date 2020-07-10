@@ -6,12 +6,12 @@ Done:
 - shootbar
 - healthbar
 - ball_collision
+- panel_handler
 
 ToDo:
 - enemy
 - enemy_fortress
 - follow_player
 - menu_handler
-- panel_handler
 - ship_movement
 - GAME MANUAL

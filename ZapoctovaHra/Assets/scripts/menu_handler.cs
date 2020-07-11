@@ -32,10 +32,12 @@ public class menu_handler : MonoBehaviour
         continue_game_panel.SetActive(false);
         new_game_panel.SetActive(false);
         delete_world_panel.SetActive(false);
-		if(Directory.Exists("Saves")){
+		if (Directory.Exists("Saves"))
+        {
 			files = Directory.GetFiles("Saves","*.world");
 		}
-		else{
+		else
+        {
 			Directory.CreateDirectory("Saves");
 			files = new string[0];
 		}
@@ -104,7 +106,8 @@ public class menu_handler : MonoBehaviour
         continue_game_panel.SetActive(true);
     }
 
-    public void Exit() {
+    public void Exit() 
+    {
         Application.Quit(0);
     }
 
@@ -135,7 +138,8 @@ public class menu_handler : MonoBehaviour
         new_game_panel.SetActive(true);
     }
 	
-	public void NewWorldSlider(System.Single size){
+	public void NewWorldSlider(System.Single size)
+    {
 		size_slider_text.text = "World size:    " + size + "     (approx." + (int)(Mathf.Pow((2 << (int)size - 1), 2) / 1000) + "kB.)";
 		newworld_size = 2 << ((int) size - 1);
 	}

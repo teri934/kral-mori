@@ -6,13 +6,13 @@ public class enemy : MonoBehaviour
 {
 	Rigidbody rb;
 	ship_movement player;
-	float speed = 5f;
+	const float speed = 5f;
 	float windAngle;
 	Vector3 playerVect;
 	int health = 3;
 	
 	public GameObject ball;
-	float ball_force = 6f;
+	const float ball_force = 6f;
 	
 	float lastShootTime;
 	const int shootDelay = 4;
@@ -34,12 +34,11 @@ public class enemy : MonoBehaviour
 		Ray ray = new Ray(transform.position, transform.right);
 		if (Physics.Raycast(ray, out RaycastHit hit, 50))
 		{
-			return true;
+			if(hit.collider.gameObject.tag == "ship"){
+				return true;
+			}
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	void TakeDamage(GameObject other)
@@ -60,7 +59,7 @@ public class enemy : MonoBehaviour
 		if (transform.position.y < -3)
 		{
 			ship_movement.objInScene.SpawnEnemy(1);
-			ship_movement.objInScene.AddToScore(100);
+			ship_movement.objInScene.Score += 100;
 			Destroy(gameObject);
 		}
 	}

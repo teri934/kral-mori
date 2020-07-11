@@ -40,6 +40,12 @@ public class ship_movement : MonoBehaviour
     public int Score
     {
         get { return score; }
+		set { 
+		if(value>score){
+			score = value;
+			scoreboard.text = "Score: " + score;
+		}
+	}
     }
 
     public int counter_coconuts
@@ -82,18 +88,12 @@ public class ship_movement : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void AddToScore(int increment) 
-    {
-        score += increment;
-        scoreboard.text = "Score: " + score;
-    }
-
     private void FixedUpdate()
     {
 
         if (anchor == false)
         {
-            rb.AddForce(speed * transform.forward + transform.forward * speed * Mathf.Cos(angle * (Mathf.PI / 180)), ForceMode.Force);
+            rb.AddForce(speed * transform.forward * Mathf.Cos(0.5f * angle * (Mathf.PI / 180)));
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -110,7 +110,7 @@ public class ship_movement : MonoBehaviour
     {
         Time.timeScale = 0;
         game_over_panel.SetActive(true);
-        game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "Your score was " + score;
+        game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "Your score was " + Score;
         menu_handler.DeleteFiles(WorldLoader.activeMapFilename);
     }
 
@@ -255,14 +255,14 @@ public class ship_movement : MonoBehaviour
                 {
                     kaching_sound.GetComponent<AudioSource>().Play();
                     counter_coconuts++;
-                    AddToScore(5);
+                    Score += 5;
                     Destroy(hit.collider.gameObject);
                 }
                 if (hit.collider.gameObject.tag == "orange")
                 {
                     kaching_sound.GetComponent<AudioSource>().Play();
                     counter_oranges++;
-                    AddToScore(5);
+                    Score += 5;
                     Destroy(hit.collider.gameObject);
                 }
             }

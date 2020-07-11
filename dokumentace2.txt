@@ -4,7 +4,8 @@ Třída generate_islands:
 	
 Třída WorldLoader:
 	- stará se o načítání herního světa ze souborů a o manipulaci s mapou světa.
-	statické proměnné:
+	(všechny proměnné i metody jsou statické)
+	proměnné:
 		- byte[][] world_map - odpovídá aktivní "mapě ostrovů" (matici typů ostrovů)
 			- 0x00 = moře
 			- 0x01 = prázdný ostrov
@@ -15,7 +16,7 @@ Třída WorldLoader:
 		- string activeMapFilename - jméno aktuálního souboru s mapou (bez přípony)
 		- int spawnX, int spawnY - počáteční/uložená pozice hráče (pokud se otevírá již hraná mapa, přečte se z .state souboru)
 		
-	statické metody:
+	metody:
 		void SaveState()
 			- volá funkci SaveState(string filename) s jménem aktivní mapy
 		void SaveState(string filename)
@@ -60,7 +61,7 @@ Třída Chunk:
 			- Chunk čte "svůj" (podle své pozice ve scéně) 16x16 výsek mapy (WorldLoader.world_map) a podle přečtených dat vkládá do scény dané ostrovy (+ případné objekty zájmu).
 			- zároveň nové objekty ve scéně přidává do seznamu existingIslands (i objekty zájmu!)
 		void RemoveIslands()
-			- Chunk projde seznam existingIslands a na každý objekt v něm zavolá funkci Destroy() - vymaže objekt ze scény.
+			- Chunk projde seznam existingIslands a na každý objekt v něm zavolá funkci Destroy() - vymaže své objekty ze scény.
 		void printChunk()
 			- vytiskne příslušnou část mapy (Chunk) do Debug.Log()
 		int TypeOfIsland(int x, int y)
@@ -78,3 +79,61 @@ Třída world_trigger:
 		void OnTriggerExit(Collider collider)
 			- když objekt world_trig (ve scéně) zaznamená "kolizi" s objektem hráče (tedy když se hráč dostatečně vzdálí od středu prostředního aktivního Chunku), zjistí, kterým směrem se hráč pohybuje; tímto směrem vygeneruje nové Chunky (na Chunky na protější straně zavolá jejich metodu RemoveIslands()).
 			
+Třída enemy:
+	metody:
+		Vector3 vectorToPlayer()
+			- vrátí trojrozměrný vektor vedoucí od sebe k hráčovi
+		bool InSight()
+			- pomocí raycastingu zjistí, zda je od něj loď hráče na dostřel (na pravé straně)
+		void TakeDamage(GameObject other)
+			- odečte jeden bod zdraví a "odhodí" objekt třídy enemy směrem od místa srážky
+		void Sink()
+			- posouvá objekt třídy enemy konstatní rychlostí směrem dolů (podle záporné osy y)
+			- pokud je objekt dostatečně nízko (pod objektem sea), odstraní se ze scény
+		void Emerge()
+			- posouvá objekt třídy enemy konstatní rychlostí směrem nahoru (podle kladné osy y)
+		void OnCollisionEnter(Collision collision) a void OnTriggerEnter(Collider other)
+			- volají funkci TakeDamage, když objekt třídy enemy narazí do jiného / je zasažen dělovou koulí hráče
+		void Shoot()
+			- loď vystřelí tři nepřátelské dělové koule a přehraje zvuk střelby
+
+		void Update()
+			- v herní smyčce objekt kontroluje své zdraví, svou pozici a úhel, který svírá s hráčem.
+			- pokud je s hráčem otočený "tím stejným směrem" (plují souběžně), snaží se dostat k jeho levému boku (tedy se k hráči natočit svou pravou stranou s kanóny),
+				pokud plují s hráčem proti sobě, snaží se dostat (z pohledu hráče) napravo.
+			- loď nepřítele reaguje na vektor větru analogicky s lodí hráče.
+
+Třída ship_movement:
+	proměnné:
+		objekt třídy ship_movement uchovává několik proměnných s informacemi o hráčově postupu hrou (počet surovin na palubě, hráčovo zdraví atp.), také odkazy na objekty UI ve scéně
+	vlastnosti:
+		pomocí vlasntostí Score, counter_coconuts a counter_oranges manipulujeme s odpovídajícími proměnnými a překreslujeme odpovídající prvky UI
+	metody:
+		void GameOver()
+			- zastaví herní čas, smaže herní soubory s mapou a stavem a zobrazí panel s výsledným skóre
+		void UpdateCounters()
+			- přepíše aktuální stav surovin v UI
+		void TakeDamage(int damage, GameObject other)
+			- odečte od zdraví utržené požkození a "odhodí" "odhodí" objekt třídy ship_movement směrem od místa srážky, zároveň zatřese kamerou (pokud nezbývá žádné zdraví, vyvolá funkci GameOver())
+		void SpawnEnemy(int num)
+			- vytvoří nepřátelskou loď v náhodném volném poli v okolí 5x5 ostrovů kolem hráče 
+		List<Vector3> WhereCanISpawn()
+			- vrátí seznam souřadnic volných bloků v okolí 5x5 bloků kolem hráče (souřadnice relativní k objektu hráče ve scéně)
+		void OnCollisionEnter(Collision collision) a void OnTriggerEnter(Collider other)
+			- volají funkci TakeDamage, když hráč narazí do jiného objektu / je zasažen nepřátelskou dělovou koulí
+		void RefreshHealth()
+			- překreslí ukazatel zdraví podle aktuální hodnoty proměnné health
+		IEnumerator Shoot()
+			- vystřelí 3 dělové koule napravo od hráčovy lodě, upraví počet munice, zatřese kamerou a poté 4 vteřiny čeká, než povolí další výstřel
+		void Shooting()
+			- kontroluje, zda je možné volat funkci Shoot() (dostatek munice, zda uběhl dostatečný čas od posledního výstřelu atp.)
+		void Anchor()
+			- při stisknutí odpovídající klávesy přepíná stav kotvy (bool anchor) a odpovídající UI prvek
+		void Collect()
+			- pomocí raycastingu zjišťuje, zda kliknutí hráče směřovalo na nějaký "klikatelný" prvek; pokud ano, upraví skóre, smaže zdroj surovin atd.
+		void AddToHealth()
+			- při stisknutí odpovídající klávesy upravuje stav zdraví (int health) a pomerančů (int counter_oranges)
+		void FindObjectInScene()
+			- do statické proměnné ship_movement.objInScene přiřadí odkaz na objekt lodě ve scéně (ten je ve scéně jediný), odkaz na objekt hráčovy lodě pak mohou ostatní objekty číst odsud (odpadá potřeba pokaždé volat funkci FindObjectOfType)
+		void Start(), void FixedUpdate(), void Update()
+			- inicializují herní scénu, volají podfunkce, starají se o ovládání lodi a reakci lodi na směr větru (wind_generator.position)

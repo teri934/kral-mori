@@ -83,7 +83,7 @@ public static class WorldLoader
 		ship_movement.objInScene.counter_coconuts = Convert.ToInt32(stateFile.ReadLine());
 		ship_movement.objInScene.health = Convert.ToInt32(stateFile.ReadLine());
 		ship_movement.objInScene.RefreshHealth();
-		ship_movement.objInScene.AddToScore(Convert.ToInt32(stateFile.ReadLine()));
+		ship_movement.objInScene.Score = Convert.ToInt32(stateFile.ReadLine());
 
 		stateFile.Close();
 		

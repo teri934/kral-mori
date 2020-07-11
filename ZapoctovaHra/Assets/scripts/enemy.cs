@@ -21,7 +21,6 @@ public class enemy : MonoBehaviour
     void Start()
     {
 		player = ship_movement.objInScene;
-		Debug.Log("Enemy: "+ player.transform.position);
 		rb = GetComponent<Rigidbody>();
     }
 	
@@ -48,14 +47,12 @@ public class enemy : MonoBehaviour
 			gameObject.GetComponent<ParticleSystem>().Play();
 			rb.AddForce(3f * (transform.position - other.gameObject.transform.position), ForceMode.Impulse);
 			health--;
-			Debug.Log(health);
 		}
 	}
 	
 	void Sink()
 	{
 		transform.Translate(-2 * Vector3.up * Time.deltaTime);
-		Debug.Log("Sinking");
 		if (transform.position.y < -3)
 		{
 			ship_movement.objInScene.SpawnEnemy(1);
@@ -67,7 +64,6 @@ public class enemy : MonoBehaviour
 	void Emerge()
 	{
 		transform.Translate(Vector3.up * Time.deltaTime);
-		Debug.Log("Emerging");
 	}
 	
 	private void OnCollisionEnter(Collision collision)

@@ -141,18 +141,13 @@ public static class WorldLoader
 		
 		CreateMapMatrix(world_size);
 		
-		Debug.Log(size_as_power_of_2);
 		
 		//az potom data o svete
 		serializedMap = File.ReadAllBytes(filePath);
 		for(int i = 0; i < serializedMap.Length - 16; i++)
 		{
 			world_map[i >> size_as_power_of_2][i % world_size] = serializedMap[i + 15];
-		}
-
-		Debug.Log("Cteni dokonceno!");
-		
-		
+		}		
 	}
 	
 	private static void PerlinGenerate()
@@ -168,8 +163,8 @@ public static class WorldLoader
 			}
 		}
 		//aby se hrac nezrodil pod ostrovem
-		for(int i = 0; i<9; i++){
-			world_map[i/3][i%3] = 0;
+		for(int i = 0; i < 9; i++){
+			world_map[i / 3][i % 3] = 0;
 		}
 	}
 
@@ -189,7 +184,6 @@ public static class WorldLoader
 		
 		if (File.Exists(filePath+".world")) 
 		{
-			Debug.Log("Soubor existuje.");
 			ReadMap(filePath);
 			LoadState(filePath);
 		}
@@ -199,8 +193,7 @@ public static class WorldLoader
 			//pokud soubor s mapou neexistoval, generuje se novy svet dane velikosti
 			PerlinGenerate();
 			WriteMap(filePath);
-			//stav hrace se ulozi az po prvnim zavreni hry.
-			Debug.Log("Soubor vytvoren.");			
+			//stav hrace se ulozi az po prvnim zavreni hry.		
 		}
 	}
 }
@@ -298,20 +291,6 @@ public class Chunk : ScriptableObject
 	
 	}
 	
-	//prints matrix to Debug.Log
-	public void printChunk()
-	{
-		string matice = System.Environment.NewLine;
-		for(int i = 0; i < size; i++)
-		{
-			for(int j = 0; j < size; j++){
-				matice = matice + WorldLoader.ReadFromMap(i, j) + " ";
-			}
-			matice += System.Environment.NewLine;
-		}
-		Debug.Log(matice);
-	}
-
 	private int TypeOfIsland(int x, int y)
 	{
 		int value_of_island = 0;

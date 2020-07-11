@@ -11,7 +11,7 @@ public class enemy_fortress : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ship = GameObject.Find("ship_01");
+        ship = ship_movement.objInScene.gameObject;
     }
 
     // Update is called once per frame
@@ -38,4 +38,3 @@ public class enemy_fortress : MonoBehaviour
         }
     }
 }
-//TODO make balls actually shoot

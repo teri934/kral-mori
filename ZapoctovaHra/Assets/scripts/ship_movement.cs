@@ -169,7 +169,6 @@ public class ship_movement : MonoBehaviour
             }
             log += '\n';
         }
-        Debug.Log(log);
         return result;
     }
 

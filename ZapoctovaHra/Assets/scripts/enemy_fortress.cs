@@ -23,7 +23,6 @@ public class enemy_fortress : MonoBehaviour
         new_ball.GetComponent<ball_collision>().enemy_ball = true;
         Vector3 vector_between_ship = ship.transform.position - transform.position;
         new_ball.GetComponent<Rigidbody>().AddForce(vector_between_ship * 0.8f, ForceMode.Impulse);
-        Debug.Log("shoot");
         yield return new WaitForSeconds(shoot_interval);
         shoot = true;
     }

@@ -44,6 +44,10 @@ public class ship_movement : MonoBehaviour
         get { return score; }
 		set { 
 		if(value>score){
+            if(score/1000 < value/1000) //a new enemy gets spawned anytime the player gets over "a thousand" to keep it challenging (it's a slippery slope once there are many enemies)
+                {
+                    SpawnEnemy(1);
+                }
 			score = value;
 			scoreboard.text = "Score: " + score;
 		}

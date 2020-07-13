@@ -17,7 +17,7 @@ public class menu_handler : MonoBehaviour
     public Text choose_world;
 	
     public string world_name;
-	public int newworld_size;
+	public int newworld_size = 8;
 	private string[] files;
 	
     public Text invalid;

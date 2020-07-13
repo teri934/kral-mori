@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+using System;
 
 public class ship_movement : MonoBehaviour
 {
@@ -111,9 +113,37 @@ public class ship_movement : MonoBehaviour
         Time.timeScale = 0;
         game_over_panel.SetActive(true);
         game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "Your score was " + Score;
+        CheckScore();
         menu_handler.DeleteFiles(WorldLoader.activeMapFilename);
     }
+    private void CheckScore()
+    {
+        bool overwrite = false;
+        if (File.Exists("Saves/scores_list.txt"))
+        {
+            using (StreamReader last_scores_read = new StreamReader("Saves/scores_list.txt"))
+            {
+                if (Score > Convert.ToInt32(last_scores_read.ReadLine()))
+                {
+                    overwrite = true;
+                    game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "New record! Your score was " + Score;
+                }
+            }
+        }
+        else
+        {
+            overwrite = true;
+            game_over_panel.transform.Find("endscore").GetComponent<Text>().text = "New record! Your score was " + Score;
+        }
 
+        if (overwrite)
+        {
+            using (StreamWriter last_scores_write = new StreamWriter("Saves/scores_list.txt"))
+            {
+                last_scores_write.WriteLine(Score);
+            }
+        }
+    }
     private void UpdateCounters()
     {
         orange_text.text = "" + counter_oranges;

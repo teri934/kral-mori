@@ -3,3 +3,7 @@ Král moří is a hardcore survival game set in a world consisting of various ra
 
 [Game Manual](https://raw.githubusercontent.com/Teri934/ZapoctovaHra/master/game_manual.pdf) \
 [Documentation (in Czech/Slovak)](https://raw.githubusercontent.com/Teri934/ZapoctovaHra/master/Dokumentace.pdf)
+
+Authors:
+Tereza Kulichová
+Jindřich Bär
